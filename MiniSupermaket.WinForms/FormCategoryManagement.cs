@@ -9,7 +9,7 @@ namespace MiniSupermarket.WinForms
         // Kiểm tra port 7123 có đúng với API của bạn không
         private static readonly HttpClient _client = new HttpClient
         {
-            BaseAddress = new Uri("https://localhost:7123/api/")
+            BaseAddress = new Uri("https://localhost:7207/api/")
         };
 
         public FormCategoryManagement()
@@ -348,6 +348,16 @@ namespace MiniSupermarket.WinForms
             txtId.Clear();
             txtCategoryName.Clear();
             txtDescription.Clear();
+        }
+
+        private void dfasdf(object sender, EventArgs e)
+        {
+
+        }
+
+        private void txtCategoryName_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 
