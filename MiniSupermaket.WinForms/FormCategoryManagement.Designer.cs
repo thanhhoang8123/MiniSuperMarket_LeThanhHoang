@@ -65,7 +65,6 @@
             grpSearch.TabIndex = 0;
             grpSearch.TabStop = false;
             grpSearch.Text = "Tìm kiếm";
-            
             // 
             // btnLoad
             // 
@@ -120,18 +119,16 @@
             dgvCategories.Size = new Size(380, 290);
             dgvCategories.TabIndex = 0;
             dgvCategories.CellClick += dgvCategories_CellClick;
-           
             // 
             // colId
             // 
-            colId.DataPropertyName = "id";
+            colId.DataPropertyName = "CategoryId";
             colId.HeaderText = "Mã ID";
             colId.Name = "colId";
             colId.ReadOnly = true;
             // 
             // colCategoryName
-            // 
-            colCategoryName.DataPropertyName = "category_name";
+             colCategoryName.DataPropertyName = "CategoryName";
             colCategoryName.HeaderText = "Tên Nhóm hàng";
             colCategoryName.Name = "colCategoryName";
             colCategoryName.ReadOnly = true;
@@ -139,7 +136,7 @@
             // colDescription
             // 
             colDescription.DataPropertyName = "description";
-            colDescription.HeaderText = "description";
+            colDescription.HeaderText = "Mô Tả";
             colDescription.Name = "colDescription";
             colDescription.ReadOnly = true;
             // 
@@ -214,7 +211,8 @@
             txtCategoryName.Name = "txtCategoryName";
             txtCategoryName.Size = new Size(300, 23);
             txtCategoryName.TabIndex = 3;
-           
+            txtCategoryName.Click += dfasdf;
+            txtCategoryName.TextChanged += txtCategoryName_TextChanged;
             // 
             // lblCategoryName
             // 
@@ -224,7 +222,6 @@
             lblCategoryName.Size = new Size(92, 15);
             lblCategoryName.TabIndex = 2;
             lblCategoryName.Text = "Tên Nhóm hàng";
-            
             // 
             // txtId
             // 
