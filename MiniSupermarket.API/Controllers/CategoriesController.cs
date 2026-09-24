@@ -1,8 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MiniSupermarket.API.Models;
+using Microsoft.AspNetCore.Authorization;
+
+
+
 
 namespace MiniSupermarket.API.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")] // Định tuyến cơ sở: /api/categories
     [ApiController]
     public class CategoriesController : ControllerBase
@@ -19,6 +24,7 @@ namespace MiniSupermarket.API.Controllers
 
         // 1. READ: Lấy toàn bộ danh sách nhóm hàng (GET /api/categories)
         [HttpGet]
+        [Authorize(Roles = "Admin,Cashier")]
         public IActionResult GetAll()
         {
             // Trả về mã 200 OK kèm theo danh sách JSON
@@ -27,6 +33,7 @@ namespace MiniSupermarket.API.Controllers
 
         // 2. READ: Lấy chi tiết một nhóm hàng theo ID (GET /api/categories/{id})
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin,Cashier")]
         public IActionResult GetById(int id)
         {
             var cat = _categories.FirstOrDefault(c => c.CategoryId == id);
@@ -40,6 +47,8 @@ namespace MiniSupermarket.API.Controllers
 
         // 3. SEARCH: Tìm kiếm nhóm hàng theo từ khóa qua Query String (GET /api/categories/search?keyword=...)
         [HttpGet("search")]
+        [Authorize(Roles = "Admin,Cashier")]
+
         public IActionResult Search([FromQuery] string keyword)
         {
             if (string.IsNullOrWhiteSpace(keyword))
@@ -55,6 +64,7 @@ namespace MiniSupermarket.API.Controllers
 
         // 4. CREATE: Thêm mới nhóm hàng (POST /api/categories)
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public IActionResult Create([FromBody] Category newCat)
         {
             if (string.IsNullOrWhiteSpace(newCat.CategoryName))
@@ -71,6 +81,7 @@ namespace MiniSupermarket.API.Controllers
 
         // 5. UPDATE: Cập nhật thông tin nhóm hàng (PUT /api/categories/{id})
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public IActionResult Update(int id, [FromBody] Category updateCat)
         {
             var cat = _categories.FirstOrDefault(c => c.CategoryId == id);
@@ -88,6 +99,7 @@ namespace MiniSupermarket.API.Controllers
 
         // 6. DELETE: Xóa nhóm hàng theo ID (DELETE /api/categories/{id})
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public IActionResult Delete(int id)
         {
             var cat = _categories.FirstOrDefault(c => c.CategoryId == id);
@@ -97,6 +109,32 @@ namespace MiniSupermarket.API.Controllers
             }
             _categories.Remove(cat);
             return NoContent();
+        }
+        // 4. Kiểm tra quyền Admin (Chỉ tài khoản có Role = Admin mới được gọi)
+
+        [HttpGet("admin-dashboard")]
+
+        [Authorize(Roles = "Admin")]
+
+        public IActionResult GetAdminDashboard()
+        {
+
+            return Ok(new { message = "Chào mừng Admin! Bạn có toàn quyền quản trị hệ thống siêu thị mini." });
+
+        }
+
+
+        // 5. Kiểm tra quyền chung cho nhân viên (Cả Admin và Cashier đều gọi được)
+
+        [HttpGet("staff-pos")]
+
+        [Authorize(Roles = "Admin,Cashier")]
+
+        public IActionResult GetStaffPos()
+        {
+
+            return Ok(new { message = "Màn hình POS Thu ngân sẵn sàng phục vụ bán hàng." });
+
         }
     }
 }
