@@ -1,60 +1,192 @@
-# 🛒 HỆ THỐNG QUẢN LÝ SIÊU THỊ MINI (MINISUPERMARKET SYSTEM)
-> **Môn học:** Lập trình Ứng dụng .NET Core (Mã môn: 229162)  
-> **Buổi thực hành:** Buổi 1 - Xây dựng Web API quản lý danh mục và kết nối WinForms Client (CRUD)
+# MiniSupermarket System
+
+## 📚 Thông tin
+- Môn học: Lập trình Ứng dụng .NET Core
+- Buổi: 2
+- Đề tài: Hệ thống quản lý siêu thị mini
+- Kiến trúc: Client - Server
 
 ---
 
-## 🏗️ 1. Mô hình Kiến trúc Hệ thống (Client - Server)
-Dự án được xây dựng theo mô hình phân tầng hiện đại, tách biệt hoàn toàn giữa Backend và Frontend:
-* **`MiniSupermarket.API` (Backend):** Dự án ASP.NET Core Web API chịu trách nhiệm xử lý logic nghiệp vụ, quản lý dữ liệu và cung cấp các RESTful API chuẩn hóa.
-* **`MiniSupermarket.WinForms` (Frontend Client):** Ứng dụng Windows Forms đóng vai trò là máy trạm POS tại quầy, sử dụng `HttpClient` để gọi dữ liệu từ API qua mạng và hiển thị trực quan lên `DataGridView`.
+## 🎯 Mục tiêu Buổi 2
+
+Xây dựng cơ chế **xác thực và phân quyền người dùng** cho hệ thống
+thông qua **JWT (JSON Web Token)**.
+
+Các nội dung chính:
+- Authentication (Xác thực)
+- Authorization (Phân quyền)
+- JWT Stateless
+- Phân quyền Admin / Cashier
+- Đăng nhập trên WinForms
+- Gửi Bearer Token khi gọi Web API
 
 ---
 
-## 🛠️ 2. Công nghệ Sử dụng
-* **Ngôn ngữ:** C# (.NET 8.0)
-* **Backend:** ASP.NET Core Web API, Controllers, In-Memory Data, LINQ
-* **Frontend:** Windows Forms (.NET 8.0), `System.Net.Http.Json`
-* **Công cụ kiểm thử:** Swagger UI
+## 🔐 1. Authentication & Authorization
+
+### Authentication
+Kiểm tra danh tính người dùng thông qua tài khoản và mật khẩu.
+
+Sau khi đăng nhập thành công, Web API trả về:
+- JWT Token
+- Role của người dùng
+
+### Authorization
+Kiểm tra quyền của người dùng khi truy cập API.
+
+Hệ thống sử dụng:
+- `[Authorize]`: yêu cầu người dùng đã đăng nhập.
+- `[Authorize(Roles = "Admin")]`: chỉ cho phép Admin.
+- `[Authorize(Roles = "Admin,Cashier")]`: cho phép Admin hoặc Cashier.
 
 ---
 
-## 📂 3. Cấu trúc Solution
+## 🔑 2. JWT Authentication
+
+JWT được sử dụng theo mô hình **Stateless**.
+
+Server không lưu Session của người dùng trên RAM. 
+Thông tin xác thực được chứa trong JWT Token và Client gửi Token
+trong các request tiếp theo.
+
+JWT gồm 3 phần:
+- Header
+- Payload (Claims)
+- Signature
+
+Các thông tin như Username, Role và thời hạn Token được sử dụng
+để xác định người dùng và quyền truy cập. :contentReference[oaicite:2]{index=2}
+
+---
+
+## ⚙️ 3. Backend - ASP.NET Core Web API
+
+### AuthController
+
+Xây dựng API đăng nhập:
+
 ```text
-MiniSupermarketSystem/
+POST /api/auth/login
+
+Client gửi:
+
+{
+    "username": "admin",
+    "password": "123456"
+}
+
+Sau khi xác thực thành công, API trả về JWT Token và Role.
+
+Cấu hình JWT
+
+JWT được cấu hình trong:
+
+Program.cs
+
+Sử dụng:
+
+JwtBearer
+Secret Key
+Authentication Middleware
+Authorization Middleware
+
+Các API cần bảo vệ được đánh dấu bằng [Authorize].
+
+🖥️ 4. WinForms Client
+
+Xây dựng màn hình:
+
+FormLogin
+
+Các chức năng:
+
+Nhập Username và Password.
+Gửi yêu cầu đăng nhập đến Web API.
+Nhận JWT Token.
+Lưu Token và Role.
+Mở FormCategoryManagement sau khi đăng nhập thành công.
+SessionManager
+
+Lưu thông tin phiên làm việc:
+
+JwtToken
+CurrentRole
+
+SessionManager giúp các Form khác sử dụng Token khi gọi API.
+
+🛡️ 5. Gửi Bearer Token
+
+Các request từ WinForms đến API được đính kèm:
+
+Authorization: Bearer <JWT_TOKEN>
+
+Ví dụ:
+
+client.DefaultRequestHeaders.Authorization =
+    new AuthenticationHeaderValue(
+        "Bearer",
+        SessionManager.JwtToken);
+
+Nhờ đó WinForms có thể gọi các API đã được bảo vệ bằng
+[Authorize].
+
+🧪 6. Kiểm thử phân quyền
+Trường hợp	Kết quả
+Chưa đăng nhập gọi API bảo vệ	401 Unauthorized
+Đăng nhập thành công	Nhận JWT Token
+Cashier gọi API được phép	200 OK
+Cashier gọi API chỉ dành cho Admin	403 Forbidden
+Admin gọi API Admin	Được phép
+🔄 7. Luồng hoạt động
+┌──────────────┐
+│   FormLogin  │
+└──────┬───────┘
+       │ Username + Password
+       ▼
+┌────────────────────┐
+│  POST /auth/login  │
+└─────────┬──────────┘
+          │
+          ▼
+┌────────────────────┐
+│      JWT Token     │
+│   + Role           │
+└─────────┬──────────┘
+          │
+          ▼
+┌────────────────────┐
+│   SessionManager   │
+└─────────┬──────────┘
+          │ Bearer Token
+          ▼
+┌────────────────────┐
+│      Web API       │
+│ [Authorize]        │
+└─────────┬──────────┘
+          │
+          ▼
+    Admin / Cashier
+🛠️ Công nghệ sử dụng
+.NET 8
+ASP.NET Core Web API
+Windows Forms
+JWT Authentication
+REST API
+Swagger
+C#
+Visual Studio
+📁 Cấu trúc chính
+MiniSupermarket
 │
-├── MiniSupermarket.API/          # Dự án Web API (Backend)
-│   ├── Controllers/              # Chứa CategoriesController (CRUD & Search)
-│   ├── Models/                   # Chứa lớp thực thể Category.cs
-│   └── Program.cs                # Cấu hình dịch vụ và Middleware
+├── MiniSupermarket.API
+│   ├── Controllers
+│   │   ├── AuthController.cs
+│   │   └── CategoriesController.cs
+│   ├── Models
+│   └── Program.cs
 │
-└── MiniSupermarket.WinForms/     # Dự án Windows Forms (Frontend Client)
-    └── FormCategoryManagement.cs # Giao diện quản lý danh mục CRUD
-
-
-🚀 4. Hướng dẫn Chạy và Kiểm thử Dự án
-Bước 1: Chạy phía Backend (Web API)
-Mở Solution bằng Visual Studio 2022.
-
-
-Nhấp chuột phải vào project MiniSupermarket.API chọn Set as Startup Project.
-
-
-Nhấn F5 để chạy. Trình duyệt sẽ tự động mở giao diện Swagger UI để kiểm tra các phương thức GET, POST, PUT, DELETE.
-
-
-Bước 2: Chạy phía Frontend (WinForms Client)
-Đảm bảo cổng (Port) trong ApiClientService hoặc HttpClient của WinForms khớp với cổng https://localhost:XXXXX của Web API đang chạy.
-
-Nhấp chuột phải vào project MiniSupermarket.WinForms chọn Debug -> Start new instance.
-
-Thử nghiệm các chức năng: Tải danh sách, Thêm mới, Sửa, Xóa và Tìm kiếm nhóm hàng.
-
-👨‍💻 5. Tác giả
-Họ tên sinh viên: [Lê Thanh Hoàng]
-
-
-Mã sinh viên: [2124110130]
-
-
-Lớp học phần: [229162]
+└── MiniSupermarket.WinForms
+    ├── FormLogin.cs
+    ├── FormCategoryManagement.cs
+    └── SessionManager.cs
