@@ -311,7 +311,7 @@ namespace MiniSupermarket.API.Data
                     CustomerId = 1,
                     CustomerName = "Nguyễn Văn An",
                     PhoneNumber = "0901122334",
-                    Address = "Quận 10, TP.HCM",
+                    Address = "15 Đường Thành Thái, Phường 12, Quận 10, TP.HCM",
                     RewardPoints = 850,
                     MembershipRank = "Vàng"
                 },
@@ -321,7 +321,7 @@ namespace MiniSupermarket.API.Data
                     CustomerId = 2,
                     CustomerName = "Trần Thị Bình",
                     PhoneNumber = "0918877665",
-                    Address = "Quận 3, TP.HCM",
+                    Address = "28 Đường Võ Văn Tần, Phường 6, Quận 3, TP.HCM",
                     RewardPoints = 520,
                     MembershipRank = "Bạc"
                 },
@@ -331,7 +331,7 @@ namespace MiniSupermarket.API.Data
                     CustomerId = 3,
                     CustomerName = "Lê Văn Cường",
                     PhoneNumber = "0983344556",
-                    Address = "Quận 5, TP.HCM",
+                    Address = "42 Đường Nguyễn Trãi, Phường 3, Quận 5, TP.HCM",
                     RewardPoints = 120,
                     MembershipRank = "Chuẩn"
                 },
@@ -341,7 +341,7 @@ namespace MiniSupermarket.API.Data
                     CustomerId = 4,
                     CustomerName = "Phạm Thị Dung",
                     PhoneNumber = "0934567812",
-                    Address = "Quận 1, TP.HCM",
+                    Address = "56 Đường Nguyễn Huệ, Phường Bến Nghé, Quận 1, TP.HCM",
                     RewardPoints = 1250,
                     MembershipRank = "Vàng"
                 },
@@ -351,7 +351,7 @@ namespace MiniSupermarket.API.Data
                     CustomerId = 5,
                     CustomerName = "Hoàng Minh Đức",
                     PhoneNumber = "0978123456",
-                    Address = "Quận 11, TP.HCM",
+                    Address = "73 Đường Lãnh Binh Thăng, Phường 12, Quận 11, TP.HCM",
                     RewardPoints = 320,
                     MembershipRank = "Bạc"
                 },
@@ -361,7 +361,7 @@ namespace MiniSupermarket.API.Data
                     CustomerId = 6,
                     CustomerName = "Võ Thị Hạnh",
                     PhoneNumber = "0908765432",
-                    Address = "Tân Bình, TP.HCM",
+                    Address = "91 Đường Cộng Hòa, Phường 4, Quận Tân Bình, TP.HCM",
                     RewardPoints = 90,
                     MembershipRank = "Chuẩn"
                 },
@@ -371,7 +371,7 @@ namespace MiniSupermarket.API.Data
                     CustomerId = 7,
                     CustomerName = "Đặng Quốc Huy",
                     PhoneNumber = "0912345678",
-                    Address = "Bình Thạnh, TP.HCM",
+                    Address = "36 Đường Xô Viết Nghệ Tĩnh, Phường 21, Quận Bình Thạnh, TP.HCM",
                     RewardPoints = 680,
                     MembershipRank = "Bạc"
                 },
@@ -381,7 +381,7 @@ namespace MiniSupermarket.API.Data
                     CustomerId = 8,
                     CustomerName = "Bùi Ngọc Lan",
                     PhoneNumber = "0987654321",
-                    Address = "Gò Vấp, TP.HCM",
+                    Address = "108 Đường Quang Trung, Phường 10, Quận Gò Vấp, TP.HCM",
                     RewardPoints = 1580,
                     MembershipRank = "Vàng"
                 },
@@ -391,7 +391,7 @@ namespace MiniSupermarket.API.Data
                     CustomerId = 9,
                     CustomerName = "Nguyễn Thị Mai",
                     PhoneNumber = "0945678123",
-                    Address = "Phú Nhuận, TP.HCM",
+                    Address = "64 Đường Phan Đình Phùng, Phường 2, Quận Phú Nhuận, TP.HCM",
                     RewardPoints = 210,
                     MembershipRank = "Chuẩn"
                 },
@@ -401,7 +401,7 @@ namespace MiniSupermarket.API.Data
                     CustomerId = 10,
                     CustomerName = "Trương Minh Nam",
                     PhoneNumber = "0961234789",
-                    Address = "Tân Phú, TP.HCM",
+                    Address = "125 Đường Lê Trọng Tấn, Phường Sơn Kỳ, Quận Tân Phú, TP.HCM",
                     RewardPoints = 760,
                     MembershipRank = "Bạc"
                 },
@@ -411,7 +411,7 @@ namespace MiniSupermarket.API.Data
                     CustomerId = 11,
                     CustomerName = "Phan Thị Oanh",
                     PhoneNumber = "0903456789",
-                    Address = "Quận 6, TP.HCM",
+                    Address = "39 Đường Hậu Giang, Phường 5, Quận 6, TP.HCM",
                     RewardPoints = 1800,
                     MembershipRank = "Vàng"
                 },
@@ -421,7 +421,7 @@ namespace MiniSupermarket.API.Data
                     CustomerId = 12,
                     CustomerName = "Đỗ Hoàng Phúc",
                     PhoneNumber = "0973456128",
-                    Address = "Quận 7, TP.HCM",
+                    Address = "82 Đường Nguyễn Thị Thập, Phường Tân Quy, Quận 7, TP.HCM",
                     RewardPoints = 60,
                     MembershipRank = "Chuẩn"
                 },
@@ -431,7 +431,7 @@ namespace MiniSupermarket.API.Data
                     CustomerId = 13,
                     CustomerName = "Lý Minh Quân",
                     PhoneNumber = "0937894561",
-                    Address = "Thủ Đức, TP.HCM",
+                    Address = "47 Đường Võ Văn Ngân, Phường Linh Chiểu, TP. Thủ Đức, TP.HCM",
                     RewardPoints = 430,
                     MembershipRank = "Bạc"
                 },
@@ -441,7 +441,7 @@ namespace MiniSupermarket.API.Data
                     CustomerId = 14,
                     CustomerName = "Nguyễn Ngọc Thảo",
                     PhoneNumber = "0915678234",
-                    Address = "Bình Tân, TP.HCM",
+                    Address = "116 Đường Tên Lửa, Phường Bình Trị Đông B, Quận Bình Tân, TP.HCM",
                     RewardPoints = 1020,
                     MembershipRank = "Vàng"
                 },
@@ -451,7 +451,7 @@ namespace MiniSupermarket.API.Data
                     CustomerId = 15,
                     CustomerName = "Trần Minh Tú",
                     PhoneNumber = "0981234567",
-                    Address = "Quận 12, TP.HCM",
+                    Address = "53 Đường Nguyễn Văn Quá, Phường Đông Hưng Thuận, Quận 12, TP.HCM",
                     RewardPoints = 150,
                     MembershipRank = "Chuẩn"
                 }

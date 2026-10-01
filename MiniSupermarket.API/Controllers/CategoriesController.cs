@@ -129,5 +129,35 @@ namespace MiniSupermarket.API.Controllers
                 message = "Màn hình POS Thu ngân sẵn sàng phục vụ bán hàng."
             });
         }
+        // ==============================
+        // ADMIN DASHBOARD
+        // ==============================
+
+        [HttpGet("/api/admin-dashboard")]
+        [Authorize(Roles = "Admin")]
+        public IActionResult AdminDashboard()
+        {
+            return Ok(new
+            {
+                message = "Chào mừng Admin đến với Dashboard!",
+                role = "Admin"
+            });
+        }
+
+
+        // ==============================
+        // STAFF POS
+        // ==============================
+
+        [HttpGet("/api/staff-pos")]
+        [Authorize(Roles = "Admin,Cashier")]
+        public IActionResult StaffPos()
+        {
+            return Ok(new
+            {
+                message = "Chào mừng nhân viên đến với POS!",
+                role = User.IsInRole("Admin") ? "Admin" : "Cashier"
+            });
+        }
     }
 }
