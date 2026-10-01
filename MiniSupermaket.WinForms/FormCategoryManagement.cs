@@ -87,7 +87,34 @@ namespace MiniSupermarket.WinForms
                     row.Cells["colDescription"].Value?.ToString() ?? "";
             }
         }
+        private string GetApiErrorMessage(
+    System.Net.HttpStatusCode statusCode)
+        {
+            switch (statusCode)
+            {
+                case System.Net.HttpStatusCode.BadRequest:
+                    return "Dữ liệu gửi lên không hợp lệ.";
 
+                case System.Net.HttpStatusCode.Unauthorized:
+                    return "Phiên đăng nhập không hợp lệ hoặc đã hết hạn.\n" +
+                           "Vui lòng đăng nhập lại.";
+
+                case System.Net.HttpStatusCode.Forbidden:
+                    return "Bạn không có quyền thực hiện thao tác này.\n" +
+                           "Vui lòng đăng nhập bằng tài khoản có quyền phù hợp.";
+
+                case System.Net.HttpStatusCode.NotFound:
+                    return "Dữ liệu không tồn tại hoặc đã bị xóa.";
+
+                case System.Net.HttpStatusCode.InternalServerError:
+                    return "Server đang xảy ra lỗi.\n" +
+                           "Vui lòng thử lại sau.";
+
+                default:
+                    return $"Không thể thực hiện yêu cầu.\n" +
+                           $"Mã lỗi: {(int)statusCode} - {statusCode}";
+            }
+        }
         // ==============================
         // THÊM MỚI
         // ==============================
@@ -132,8 +159,8 @@ namespace MiniSupermarket.WinForms
                 else
                 {
                     MessageBox.Show(
-                        "Thêm mới thất bại!",
-                        "Lỗi",
+                        GetApiErrorMessage(response.StatusCode),
+                        "Không thể thêm",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Warning
                     );
@@ -222,8 +249,8 @@ namespace MiniSupermarket.WinForms
                 else
                 {
                     MessageBox.Show(
-                        "Cập nhật thất bại!",
-                        "Lỗi",
+                        GetApiErrorMessage(response.StatusCode),
+                        "Không thể cập nhật",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Warning
                     );
@@ -302,8 +329,8 @@ namespace MiniSupermarket.WinForms
                 else
                 {
                     MessageBox.Show(
-                        "Xóa thất bại!",
-                        "Lỗi",
+                        GetApiErrorMessage(response.StatusCode),
+                        "Không thể xóa",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Warning
                     );
