@@ -1,5 +1,7 @@
 ﻿using System.Net.Http.Json;
 using System.Windows.Forms;
+using System.Net.Http.Headers;
+
 
 namespace MiniSupermarket.WinForms
 {
@@ -16,6 +18,20 @@ namespace MiniSupermarket.WinForms
         {
             InitializeComponent();
         }
+        private HttpClient GetAuthenticatedClient()
+        {
+            var client = new HttpClient
+            {
+                BaseAddress = new Uri("https://localhost:7207/api/")
+            };
+
+            // Đính kèm Token vào Header theo chuẩn Bearer Authentication
+            if (!string.IsNullOrEmpty(SessionManager.JwtToken))
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", SessionManager.JwtToken);
+            }
+            return client;
+        }
 
         // Khi Form mở lên -> tự động tải danh sách nhóm hàng
         private async void FormCategoryManagement_Load(object sender, EventArgs e)
@@ -26,25 +42,21 @@ namespace MiniSupermarket.WinForms
         // ==============================
         // LOAD DANH SÁCH NHÓM HÀNG
         // ==============================
+        // Ví dụ áp dụng khi gọi hàm tải dữ liệu LoadDataAsync():
         private async Task LoadDataAsync()
         {
             try
             {
-                var categories =
-                    await _client.GetFromJsonAsync<List<CategoryDto>>("categories");
-
+                using var client = GetAuthenticatedClient(); // Sử dụng client đã gắn token
+                var categories = await client.GetFromJsonAsync<List<CategoryDto>>("categories");
                 dgvCategories.DataSource = categories;
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    "Lỗi kết nối Server: " + ex.Message,
-                    "Lỗi",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error
-                );
+                MessageBox.Show("Lỗi quyền truy cập hoặc mất kết nối: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
 
         // ==============================
         // NÚT TẢI LẠI
@@ -75,7 +87,34 @@ namespace MiniSupermarket.WinForms
                     row.Cells["colDescription"].Value?.ToString() ?? "";
             }
         }
+        private string GetApiErrorMessage(
+    System.Net.HttpStatusCode statusCode)
+        {
+            switch (statusCode)
+            {
+                case System.Net.HttpStatusCode.BadRequest:
+                    return "Dữ liệu gửi lên không hợp lệ.";
 
+                case System.Net.HttpStatusCode.Unauthorized:
+                    return "Phiên đăng nhập không hợp lệ hoặc đã hết hạn.\n" +
+                           "Vui lòng đăng nhập lại.";
+
+                case System.Net.HttpStatusCode.Forbidden:
+                    return "Bạn không có quyền thực hiện thao tác này.\n" +
+                           "Vui lòng đăng nhập bằng tài khoản có quyền phù hợp.";
+
+                case System.Net.HttpStatusCode.NotFound:
+                    return "Dữ liệu không tồn tại hoặc đã bị xóa.";
+
+                case System.Net.HttpStatusCode.InternalServerError:
+                    return "Server đang xảy ra lỗi.\n" +
+                           "Vui lòng thử lại sau.";
+
+                default:
+                    return $"Không thể thực hiện yêu cầu.\n" +
+                           $"Mã lỗi: {(int)statusCode} - {statusCode}";
+            }
+        }
         // ==============================
         // THÊM MỚI
         // ==============================
@@ -101,8 +140,9 @@ namespace MiniSupermarket.WinForms
 
             try
             {
+                using var client = GetAuthenticatedClient();
                 var response =
-                    await _client.PostAsJsonAsync("categories", newCat);
+                    await client.PostAsJsonAsync("categories", newCat);
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -119,8 +159,8 @@ namespace MiniSupermarket.WinForms
                 else
                 {
                     MessageBox.Show(
-                        "Thêm mới thất bại!",
-                        "Lỗi",
+                        GetApiErrorMessage(response.StatusCode),
+                        "Không thể thêm",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Warning
                     );
@@ -187,8 +227,9 @@ namespace MiniSupermarket.WinForms
 
             try
             {
+                using var client = GetAuthenticatedClient();
                 var response =
-                    await _client.PutAsJsonAsync(
+                    await client.PutAsJsonAsync(
                         $"categories/{id}",
                         updateCat
                     );
@@ -208,8 +249,8 @@ namespace MiniSupermarket.WinForms
                 else
                 {
                     MessageBox.Show(
-                        "Cập nhật thất bại!",
-                        "Lỗi",
+                        GetApiErrorMessage(response.StatusCode),
+                        "Không thể cập nhật",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Warning
                     );
@@ -269,8 +310,9 @@ namespace MiniSupermarket.WinForms
 
             try
             {
+                using var client = GetAuthenticatedClient();
                 var response =
-                    await _client.DeleteAsync($"categories/{id}");
+                    await client.DeleteAsync($"categories/{id}");
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -287,8 +329,8 @@ namespace MiniSupermarket.WinForms
                 else
                 {
                     MessageBox.Show(
-                        "Xóa thất bại!",
-                        "Lỗi",
+                        GetApiErrorMessage(response.StatusCode),
+                        "Không thể xóa",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Warning
                     );
@@ -321,11 +363,12 @@ namespace MiniSupermarket.WinForms
 
             try
             {
+                using var client = GetAuthenticatedClient();
                 string url =
                     $"categories/search?keyword={Uri.EscapeDataString(keyword)}";
 
                 var result =
-                    await _client.GetFromJsonAsync<List<CategoryDto>>(url);
+                    await client.GetFromJsonAsync<List<CategoryDto>>(url);
 
                 dgvCategories.DataSource = result;
             }
