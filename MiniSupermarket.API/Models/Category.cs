@@ -1,15 +1,28 @@
-﻿namespace MiniSupermarket.API.Models
+﻿using MiniSupermarket.API.Data;
+using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
+
+namespace MiniSupermarket.API.Models
 {
-    // Lớp biểu diễn thực thể Nhóm hàng hóa trong siêu thị mini
+    // Entity Category đại diện cho bảng Categories trong SQL Server
     public class Category
     {
-        // Mã định danh nhóm hàng (Khóa chính)
+        // Khóa chính, SQL Server tự tăng ID
+        [Key]
         public int CategoryId { get; set; }
 
-        // Tên nhóm hàng (Bắt buộc, không được để trống)
+        // Tên danh mục, bắt buộc và tối đa 100 ký tự
+        [Required]
+        [StringLength(100)]
         public string CategoryName { get; set; } = string.Empty;
 
-        // Mô tả chi tiết về nhóm hàng (Có thể để trống)
+        // Mô tả danh mục, có thể để trống
+        [StringLength(500)]
         public string? Description { get; set; }
+
+        // Quan hệ 1-N: Một Category có nhiều Product
+        // JsonIgnore tránh vòng lặp khi chuyển sang JSON
+        [JsonIgnore]
+        public ICollection<Product> Products { get; set; } = new List<Product>();
     }
 }
