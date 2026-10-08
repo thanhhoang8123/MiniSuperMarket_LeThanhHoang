@@ -273,6 +273,11 @@
             dgvCustomers.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvCustomers.Size = new Size(950, 183);
             dgvCustomers.TabIndex = 11;
+            dgvCustomers.Anchor =
+                AnchorStyles.Top |
+                AnchorStyles.Bottom |
+                AnchorStyles.Left |
+                AnchorStyles.Right;
             // 
             // FormCustomerManagement
             // 
@@ -286,12 +291,10 @@
             Controls.Add(pnlActions);
             Controls.Add(grpCustomerInfo);
             Controls.Add(lblTitle);
-            FormBorderStyle = FormBorderStyle.FixedSingle;
-            MinimizeBox = false;
+            FormBorderStyle = FormBorderStyle.None;
             Name = "FormCustomerManagement";
-            StartPosition = FormStartPosition.CenterScreen;
             Text = "QUẢN LÝ KHÁCH HÀNG";
-            Load += FormCustomerManagement_Load;
+            
             grpCustomerInfo.ResumeLayout(false);
             grpCustomerInfo.PerformLayout();
             pnlActions.ResumeLayout(false);

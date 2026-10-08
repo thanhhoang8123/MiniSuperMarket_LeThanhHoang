@@ -18,6 +18,9 @@ namespace MiniSupermarket.API.Data
         public DbSet<Category> Categories { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<Customer> Customers { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderDetail> OrderDetails { get; set; }
 
 
         // ==============================
@@ -141,7 +144,23 @@ namespace MiniSupermarket.API.Data
                 }
             );
 
+            modelBuilder.Entity<Order>()
+    .HasOne(o => o.Customer)
+    .WithMany()
+    .HasForeignKey(o => o.CustomerId)
+    .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<OrderDetail>()
+                .HasOne(od => od.Order)
+                .WithMany(o => o.OrderDetails)
+                .HasForeignKey(od => od.OrderId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<OrderDetail>()
+                .HasOne(od => od.Product)
+                .WithMany()
+                .HasForeignKey(od => od.ProductId)
+                .OnDelete(DeleteBehavior.Restrict);
             // ==================================================
             // 2. PRODUCT - 15 SẢN PHẨM
             // ==================================================
@@ -456,6 +475,163 @@ namespace MiniSupermarket.API.Data
                     MembershipRank = "Chuẩn"
                 }
             );
+            // ==================================================
+            // 4. USER - 15 TÀI KHOẢN PHÂN QUYỀN
+            // ==================================================
+
+            modelBuilder.Entity<User>().HasData(
+
+                new User
+                {
+                    UserId = 1,
+                    Username = "admin01",
+                    PasswordHash = "123456",
+                    FullName = "Nguyễn Quản Trị",
+                    Role = "Admin",
+                    IsActive = true
+                },
+
+                new User
+                {
+                    UserId = 2,
+                    Username = "admin02",
+                    PasswordHash = "123456",
+                    FullName = "Trần Giám Đốc",
+                    Role = "Admin",
+                    IsActive = true
+                },
+
+                new User
+                {
+                    UserId = 3,
+                    Username = "cashier01",
+                    PasswordHash = "123456",
+                    FullName = "Lê Thu Ngân",
+                    Role = "Cashier",
+                    IsActive = true
+                },
+
+                new User
+                {
+                    UserId = 4,
+                    Username = "cashier02",
+                    PasswordHash = "123456",
+                    FullName = "Phạm Bán Hàng",
+                    Role = "Cashier",
+                    IsActive = true
+                },
+
+                new User
+                {
+                    UserId = 5,
+                    Username = "cashier03",
+                    PasswordHash = "123456",
+                    FullName = "Hoàng Thu Ngân",
+                    Role = "Cashier",
+                    IsActive = true
+                },
+
+                new User
+                {
+                    UserId = 6,
+                    Username = "cashier04",
+                    PasswordHash = "123456",
+                    FullName = "Vũ Thị Quầy",
+                    Role = "Cashier",
+                    IsActive = true
+                },
+
+                new User
+                {
+                    UserId = 7,
+                    Username = "cashier05",
+                    PasswordHash = "123456",
+                    FullName = "Đỗ Bán Lẻ",
+                    Role = "Cashier",
+                    IsActive = true
+                },
+
+                new User
+                {
+                    UserId = 8,
+                    Username = "ware01",
+                    PasswordHash = "123456",
+                    FullName = "Ngô Quản Kho",
+                    Role = "Warehouse",
+                    IsActive = true
+                },
+
+                new User
+                {
+                    UserId = 9,
+                    Username = "ware02",
+                    PasswordHash = "123456",
+                    FullName = "Bùi Kiểm Kê",
+                    Role = "Warehouse",
+                    IsActive = true
+                },
+
+                new User
+                {
+                    UserId = 10,
+                    Username = "ware03",
+                    PasswordHash = "123456",
+                    FullName = "Dương Thủ Kho",
+                    Role = "Warehouse",
+                    IsActive = true
+                },
+
+                new User
+                {
+                    UserId = 11,
+                    Username = "ware04",
+                    PasswordHash = "123456",
+                    FullName = "Lý Nhập Hàng",
+                    Role = "Warehouse",
+                    IsActive = true
+                },
+
+                new User
+                {
+                    UserId = 12,
+                    Username = "admin_backup",
+                    PasswordHash = "123456",
+                    FullName = "Đặng Hỗ Trợ",
+                    Role = "Admin",
+                    IsActive = true
+                },
+
+                new User
+                {
+                    UserId = 13,
+                    Username = "cashier06",
+                    PasswordHash = "123456",
+                    FullName = "Hồ Ca Chiều",
+                    Role = "Cashier",
+                    IsActive = true
+                },
+
+                new User
+                {
+                    UserId = 14,
+                    Username = "ware05",
+                    PasswordHash = "123456",
+                    FullName = "Trương Vận Chuyển",
+                    Role = "Warehouse",
+                    IsActive = true
+                },
+
+                new User
+                {
+                    UserId = 15,
+                    Username = "supervisor",
+                    PasswordHash = "123456",
+                    FullName = "Mai Giám Sát",
+                    Role = "Admin",
+                    IsActive = true
+                }
+            );
+
         }
     }
 }
