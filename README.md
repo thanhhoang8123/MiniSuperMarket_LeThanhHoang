@@ -74,7 +74,7 @@ Sử dụng async / await cho thao tác I/O để tránh chặn luồng xử lý
 4. Dùng Swagger kiểm tra GET, POST, PUT và DELETE cho API tương ứng.
 5. Chạy WinForms Client và kiểm tra dữ liệu hiển thị khớp với SQL Server.
 6. Kiểm tra trường hợp ID không tồn tại và dữ liệu đầu vào không hợp lệ.
-👨‍💻 9. Thông tin sinh viên
+👨‍💻 8. Thông tin sinh viên
 - Họ tên sinh viên: [Lê Thanh Hoàng]
 - Mã sinh viên: [2124110130]
 - Lớp học phần: [Lập trình ứng dụng]
