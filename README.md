@@ -1,234 +1,60 @@
- MiniSupermarket System
+🛒 HỆ THỐNG QUẢN LÝ SIÊU THỊ MINI (MINISUPERMARKET SYSTEM)
+Môn học: Lập trình Ứng dụng .NET Core (Mã môn: 229162)
+Buổi thực hành: Buổi 4 - WinForms Shell, Sidebar, Main Workspace và phân quyền
 
-📚 Thông tin
-- Môn học: Lập trình Ứng dụng .NET Core
-- Buổi: 3
-- Đề tài: Hệ thống quản lý siêu thị mini
-- Kiến trúc: Client - Server
+🏗️ 1. Mục tiêu buổi thực hành
+- Xây dựng giao diện khung chính (Shell) cho WinForms.
+- Chia giao diện thành Sidebar, Header và vùng làm việc chính.
+- Nhúng các Form nghiệp vụ vào vùng nội dung mà không mở nhiều cửa sổ rời.
+- Điều hướng chức năng theo vai trò người dùng.
+- Tổ chức giao diện theo mô hình RBAC (Role-Based Access Control).
+🛠️ 2. Công nghệ sử dụng
+- C# / .NET 8.0
+- Windows Forms
+- Panel, Button, Label, Form
+- DockStyle, FormBorderStyle, TopLevel
+- SessionManager và vai trò từ phiên đăng nhập
+- JWT Authentication phía API
+🧭 3. Cấu trúc giao diện Shell
+Giao diện chính gồm ba vùng:
+1. panelSidebar: chứa các nút điều hướng.
+2. panelTopHeader: hiển thị tiêu đề màn hình và thông tin tài khoản.
+3. panelMainContent: vùng chứa Form nghiệp vụ đang mở.
+Cấu trúc này giúp giao diện nhất quán và cho phép chuyển đổi chức năng trong cùng cửa sổ chính.
+🧩 4. Nhúng Form con động
+Khi mở một màn hình nghiệp vụ, Form con được thiết lập:
+childForm.TopLevel = false;
+childForm.FormBorderStyle = FormBorderStyle.None;
+childForm.Dock = DockStyle.Fill;
+Sau đó, Form con được thêm vào panelMainContent và gọi Show().
 
----
+Nên đóng hoặc giải phóng Form con đang hoạt động trước khi thay bằng Form mới để tránh giữ tài nguyên không cần thiết. Tiêu đề vùng Header cũng cần cập nhật theo màn hình đang mở.
+🔐 5. Điều hướng theo vai trò
+Hệ thống sử dụng thông tin vai trò đã lưu trong phiên đăng nhập để quyết định nút nào được hiển thị hoặc bật.
 
-🎯 Mục tiêu Buổi 3
-
-Chuyển hệ thống từ cơ chế lưu trữ dữ liệu tạm thời trên RAM sang
-**Microsoft SQL Server** thông qua **Entity Framework Core (EF Core)**.
-
-Các nội dung chính:
-- SQL Server
-- Entity Framework Core
-- Code-First
-- DbContext
-- EF Core Migrations
-- LINQ và async/await
-- CRUD với dữ liệu thực tế
-- Kiểm tra dữ liệu bằng SSMS
-
----
-🗄️ 1. Tích hợp SQL Server
-
-Ở Buổi 1 và Buổi 2, dữ liệu được lưu tạm trong bộ nhớ RAM nên
-sẽ mất khi Web API khởi động lại.
-
-Buổi 3 chuyển sang lưu trữ lâu dài bằng SQL Server:
-
-```text
-MiniSupermarketDb
-├── Categories
-└── Products
-
-Dữ liệu được lưu trực tiếp trong cơ sở dữ liệu và vẫn tồn tại
-sau khi tắt hoặc khởi động lại ứng dụng.
-
-🔧 2. Entity Framework Core
-
-Sử dụng EF Core theo phương pháp Code-First.
-
-Các package chính:
-
-Microsoft.EntityFrameworkCore.SqlServer
-Microsoft.EntityFrameworkCore.Tools
-Microsoft.EntityFrameworkCore.Design
-
-EF Core đóng vai trò kết nối giữa các Model C# và SQL Server.
-
-📦 3. DbContext
-
-Xây dựng:
-
-SupermarketDbContext
-
-DbContext quản lý các Entity và kết nối đến SQL Server.
-
-Các DbSet chính:
-
-DbSet<Category>
-DbSet<Product>
-
-Connection String được cấu hình trong:
-
-appsettings.json
-
-Sau đó đăng ký SupermarketDbContext vào Program.cs
-thông qua Dependency Injection.
-
-🔄 4. EF Core Migrations
-
-Sử dụng Migration để tạo và cập nhật cơ sở dữ liệu.
-
-Các lệnh chính:
-
-Add-Migration InitialCreateDatabase
-Update-Database
-
-Add-Migration tạo mã Migration dựa trên các Model.
-
-Update-Database áp dụng Migration vào SQL Server và tạo
-cấu trúc cơ sở dữ liệu.
-
-🌐 5. Web API với EF Core
-
-CategoriesController được chuyển từ dữ liệu In-Memory
-sang truy vấn trực tiếp SQL Server thông qua DbContext.
-
-Các chức năng CRUD:
-
-Method	Endpoint	Chức năng
-GET	/api/categories	Lấy danh sách
-GET	/api/categories/{id}	Lấy theo ID
-POST	/api/categories	Thêm
-PUT	/api/categories/{id}	Cập nhật
-DELETE	/api/categories/{id}	Xóa
-
-Sử dụng các phương thức bất đồng bộ như:
-
-ToListAsync()
-FindAsync()
-SaveChangesAsync()
-
-Đối với các truy vấn chỉ đọc, sử dụng AsNoTracking() để không
-cần theo dõi Entity trong DbContext.
-
-🖥️ 6. WinForms Client
-
-WinForms tiếp tục sử dụng:
-
-HttpClient
-System.Net.Http.Json
-JWT Bearer Token từ Buổi 2
-
-Các thao tác trên FormCategoryManagement được thực hiện
-thông qua Web API.
-
-WinForms
-    ↓
-HttpClient
-    ↓
-ASP.NET Core Web API
-    ↓
-Entity Framework Core
-    ↓
-SQL Server
-
-Logic CRUD phía WinForms tiếp tục sử dụng API, chỉ thay đổi
-nguồn dữ liệu phía Backend từ RAM sang SQL Server.
-
-👥 7. Bài tập mở rộng - Quản lý khách hàng
-
-Xây dựng thêm module Customers.
-
-Customer gồm:
-CustomerId
-CustomerName
-PhoneNumber
-Address
-RewardPoints
-MembershipRank
-
-Các nội dung thực hiện:
-
-Tạo Customer.cs.
-Thêm DbSet<Customer> vào SupermarketDbContext.
-Tạo Migration cập nhật CSDL.
-Xây dựng CustomersController.
-Thực hiện CRUD khách hàng.
-Xây dựng FormCustomerManagement trên WinForms.
-Tìm kiếm khách hàng theo tên hoặc số điện thoại.
-🧪 8. Kiểm thử
-Swagger
-
-Kiểm tra:
-
-GET    /api/categories
-POST   /api/categories
-PUT    /api/categories/{id}
-DELETE /api/categories/{id}
-SQL Server
-
-Sử dụng SQL Server Management Studio (SSMS) để kiểm tra
-dữ liệu trong các bảng.
-
-Ví dụ:
-
-SELECT * FROM dbo.Categories;
-WinForms
-
-Thực hiện:
-
-Thêm dữ liệu
-Cập nhật dữ liệu
-Xóa dữ liệu
-Tải lại dữ liệu
-
-Sau đó tắt Web API và WinForms rồi chạy lại để kiểm tra dữ liệu
-vẫn còn trong SQL Server.
-
-🛠️ Công nghệ sử dụng
-.NET 8
-ASP.NET Core Web API
-WinForms
-Entity Framework Core
-SQL Server
-LINQ
-JWT Authentication
-Swagger
-SSMS
-C#
-Visual Studio
-📁 Cấu trúc chính
-MiniSupermarket
-│
-├── MiniSupermarket.API
-│   ├── Controllers
-│   │   ├── AuthController.cs
-│   │   ├── CategoriesController.cs
-│   │   └── CustomersController.cs
-│   │
-│   ├── Data
-│   │   └── SupermarketDbContext.cs
-│   │
-│   ├── Models
-│   │   ├── Category.cs
-│   │   ├── Product.cs
-│   │   └── Customer.cs
-│   │
-│   ├── Migrations
-│   ├── Program.cs
-│   └── appsettings.json
-│
-└── MiniSupermarket.WinForms
-    ├── FormLogin.cs
-    ├── FormCategoryManagement.cs
-    ├── FormCustomerManagement.cs
-    └── SessionManager.cs
-✅ Kết quả Buổi 3
-
-Hoàn thành:
-
-Kết nối ASP.NET Core Web API với SQL Server.
-Sử dụng EF Core Code-First.
-Tạo và quản lý Database bằng Migrations.
-Chuyển CRUD từ In-Memory sang SQL Server.
-Sử dụng LINQ kết hợp async/await.
-Kiểm tra dữ liệu bằng Swagger và SSMS.
-Xây dựng module quản lý khách hàng.
-Đảm bảo dữ liệu vẫn tồn tại sau khi khởi động lại ứng dụng.
+Các vai trò nghiệp vụ trong tài liệu:
+- Admin: quản trị hệ thống và truy cập các chức năng quản lý được cấp quyền.
+- Cashier: sử dụng các chức năng phục vụ quầy thu ngân.
+- Warehouse: sử dụng các chức năng quản lý hàng hóa/kho được cấp quyền.
+Việc ẩn nút trên WinForms chỉ giúp điều hướng giao diện. Backend vẫn cần kiểm tra [Authorize] và vai trò ở những API cần bảo vệ; không xem giao diện là lớp bảo mật duy nhất.
+🧱 6. Các màn hình nghiệp vụ
+Tùy phạm vi đã triển khai trong Solution, Shell có thể điều hướng đến các Form như:
+- POS / thanh toán.
+- Quản lý danh mục.
+- Quản lý sản phẩm.
+- Quản lý khách hàng.
+- Quản lý hóa đơn.
+- Báo cáo.
+- Quản lý người dùng.
+Chỉ những màn hình đã có trong Solution và được nối sự kiện điều hướng mới sử dụng được; danh sách trên không có nghĩa mọi chức năng đều đã hoàn thiện.
+🚀 7. Hướng dẫn kiểm thử
+1. Chạy API và WinForms.
+2. Đăng nhập bằng tài khoản thuộc từng vai trò.
+3. Kiểm tra tên tài khoản và vai trò ở Header.
+4. Kiểm tra các nút Sidebar theo vai trò.
+5. Chuyển qua lại giữa các Form; xác nhận Form con hiển thị trong panelMainContent.
+6. Thử gọi trực tiếp API bằng token không đủ quyền để xác nhận Backend vẫn chặn truy cập.
+👨‍💻 8. Thông tin sinh viên
+- Họ tên sinh viên: [Lê Thanh Hoàng]
+- Mã sinh viên: [2124110130]
+- Lớp học phần: [Lập trình di động]
