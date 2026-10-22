@@ -89,7 +89,7 @@
             btnReports.Text = "📊  Báo cáo";
             btnReports.TextAlign = ContentAlignment.MiddleLeft;
             btnReports.UseVisualStyleBackColor = false;
-            this.btnReports.Click += new System.EventHandler(this.btnReports_Click);
+            btnReports.Click += btnReports_Click;
             // 
             // btnCustomer
             // 

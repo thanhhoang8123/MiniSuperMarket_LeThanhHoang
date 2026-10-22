@@ -631,7 +631,96 @@ namespace MiniSupermarket.API.Data
                     IsActive = true
                 }
             );
+            // ==================================================
+            // 5. ORDER - 15 HÓA ĐƠN MẪU TẠP HÓA PHỐ THỊ
+            // ==================================================
 
+            modelBuilder.Entity<Order>().HasData(
+                new Order { OrderId = 1, OrderCode = "PT-SEED-20261015-001", CreatedDate = new DateTime(2026, 10, 10, 8, 15, 0), CashierUsername = "cashier01", CustomerId = 1, TotalItems = 9, FinalAmount = 54500m, RewardPoints = 2 },
+                new Order { OrderId = 2, OrderCode = "PT-SEED-20261015-002", CreatedDate = new DateTime(2026, 10, 10, 9, 20, 0), CashierUsername = "cashier02", CustomerId = 2, TotalItems = 5, FinalAmount = 52000m, RewardPoints = 1 },
+                new Order { OrderId = 3, OrderCode = "PT-SEED-20261015-003", CreatedDate = new DateTime(2026, 10, 10, 10, 35, 0), CashierUsername = "cashier03", CustomerId = 3, TotalItems = 12, FinalAmount = 81000m, RewardPoints = 1 },
+                new Order { OrderId = 4, OrderCode = "PT-SEED-20261015-004", CreatedDate = new DateTime(2026, 10, 11, 8, 45, 0), CashierUsername = "cashier01", CustomerId = 4, TotalItems = 3, FinalAmount = 209000m, RewardPoints = 3 },
+                new Order { OrderId = 5, OrderCode = "PT-SEED-20261015-005", CreatedDate = new DateTime(2026, 10, 11, 11, 10, 0), CashierUsername = "cashier04", CustomerId = 5, TotalItems = 6, FinalAmount = 96000m, RewardPoints = 2 },
+                new Order { OrderId = 6, OrderCode = "PT-SEED-20261015-006", CreatedDate = new DateTime(2026, 10, 11, 14, 30, 0), CashierUsername = "cashier05", CustomerId = 6, TotalItems = 4, FinalAmount = 60000m, RewardPoints = 1 },
+                new Order { OrderId = 7, OrderCode = "PT-SEED-20261015-007", CreatedDate = new DateTime(2026, 10, 12, 9, 0, 0), CashierUsername = "cashier02", CustomerId = 7, TotalItems = 9, FinalAmount = 102500m, RewardPoints = 2 },
+                new Order { OrderId = 8, OrderCode = "PT-SEED-20261015-008", CreatedDate = new DateTime(2026, 10, 12, 10, 50, 0), CashierUsername = "cashier06", CustomerId = 8, TotalItems = 5, FinalAmount = 175000m, RewardPoints = 3 },
+                new Order { OrderId = 9, OrderCode = "PT-SEED-20261015-009", CreatedDate = new DateTime(2026, 10, 12, 15, 25, 0), CashierUsername = "cashier03", CustomerId = 9, TotalItems = 3, FinalAmount = 92000m, RewardPoints = 1 },
+                new Order { OrderId = 10, OrderCode = "PT-SEED-20261015-010", CreatedDate = new DateTime(2026, 10, 13, 8, 20, 0), CashierUsername = "cashier04", CustomerId = 10, TotalItems = 3, FinalAmount = 173000m, RewardPoints = 2 },
+                new Order { OrderId = 11, OrderCode = "PT-SEED-20261015-011", CreatedDate = new DateTime(2026, 10, 13, 10, 15, 0), CashierUsername = "cashier01", CustomerId = 11, TotalItems = 4, FinalAmount = 146000m, RewardPoints = 3 },
+                new Order { OrderId = 12, OrderCode = "PT-SEED-20261015-012", CreatedDate = new DateTime(2026, 10, 13, 13, 40, 0), CashierUsername = "cashier05", CustomerId = 12, TotalItems = 13, FinalAmount = 99000m, RewardPoints = 1 },
+                new Order { OrderId = 13, OrderCode = "PT-SEED-20261015-013", CreatedDate = new DateTime(2026, 10, 14, 9, 30, 0), CashierUsername = "cashier06", CustomerId = 13, TotalItems = 7, FinalAmount = 120000m, RewardPoints = 2 },
+                new Order { OrderId = 14, OrderCode = "PT-SEED-20261015-014", CreatedDate = new DateTime(2026, 10, 14, 14, 10, 0), CashierUsername = "cashier02", CustomerId = 14, TotalItems = 6, FinalAmount = 88000m, RewardPoints = 3 },
+                new Order { OrderId = 15, OrderCode = "PT-SEED-20261015-015", CreatedDate = new DateTime(2026, 10, 15, 10, 0, 0), CashierUsername = "cashier03", CustomerId = 15, TotalItems = 7, FinalAmount = 87000m, RewardPoints = 1 }
+            );
+
+            // ==================================================
+            // 6. ORDER DETAIL - 33 DÒNG CHI TIẾT HÓA ĐƠN
+            // ==================================================
+
+            modelBuilder.Entity<OrderDetail>().HasData(
+                // Hóa đơn 1: 54.500đ
+                new OrderDetail { OrderDetailId = 1, OrderId = 1, ProductId = 1, Quantity = 2, UnitPrice = 6000m, LineTotal = 12000m },
+                new OrderDetail { OrderDetailId = 2, OrderId = 1, ProductId = 2, Quantity = 2, UnitPrice = 10000m, LineTotal = 20000m },
+                new OrderDetail { OrderDetailId = 3, OrderId = 1, ProductId = 6, Quantity = 5, UnitPrice = 4500m, LineTotal = 22500m },
+
+                // Hóa đơn 2: 52.000đ
+                new OrderDetail { OrderDetailId = 4, OrderId = 2, ProductId = 3, Quantity = 4, UnitPrice = 7500m, LineTotal = 30000m },
+                new OrderDetail { OrderDetailId = 5, OrderId = 2, ProductId = 4, Quantity = 1, UnitPrice = 22000m, LineTotal = 22000m },
+
+                // Hóa đơn 3: 81.000đ
+                new OrderDetail { OrderDetailId = 6, OrderId = 3, ProductId = 5, Quantity = 2, UnitPrice = 18000m, LineTotal = 36000m },
+                new OrderDetail { OrderDetailId = 7, OrderId = 3, ProductId = 6, Quantity = 10, UnitPrice = 4500m, LineTotal = 45000m },
+
+                // Hóa đơn 4: 209.000đ
+                new OrderDetail { OrderDetailId = 8, OrderId = 4, ProductId = 7, Quantity = 1, UnitPrice = 145000m, LineTotal = 145000m },
+                new OrderDetail { OrderDetailId = 9, OrderId = 4, ProductId = 8, Quantity = 2, UnitPrice = 32000m, LineTotal = 64000m },
+
+                // Hóa đơn 5: 96.000đ
+                new OrderDetail { OrderDetailId = 10, OrderId = 5, ProductId = 2, Quantity = 4, UnitPrice = 10000m, LineTotal = 40000m },
+                new OrderDetail { OrderDetailId = 11, OrderId = 5, ProductId = 9, Quantity = 2, UnitPrice = 28000m, LineTotal = 56000m },
+
+                // Hóa đơn 6: 60.000đ
+                new OrderDetail { OrderDetailId = 12, OrderId = 6, ProductId = 1, Quantity = 3, UnitPrice = 6000m, LineTotal = 18000m },
+                new OrderDetail { OrderDetailId = 13, OrderId = 6, ProductId = 10, Quantity = 1, UnitPrice = 42000m, LineTotal = 42000m },
+
+                // Hóa đơn 7: 102.500đ
+                new OrderDetail { OrderDetailId = 14, OrderId = 7, ProductId = 4, Quantity = 2, UnitPrice = 22000m, LineTotal = 44000m },
+                new OrderDetail { OrderDetailId = 15, OrderId = 7, ProductId = 5, Quantity = 2, UnitPrice = 18000m, LineTotal = 36000m },
+                new OrderDetail { OrderDetailId = 16, OrderId = 7, ProductId = 6, Quantity = 5, UnitPrice = 4500m, LineTotal = 22500m },
+
+                // Hóa đơn 8: 175.000đ
+                new OrderDetail { OrderDetailId = 17, OrderId = 8, ProductId = 7, Quantity = 1, UnitPrice = 145000m, LineTotal = 145000m },
+                new OrderDetail { OrderDetailId = 18, OrderId = 8, ProductId = 3, Quantity = 4, UnitPrice = 7500m, LineTotal = 30000m },
+
+                // Hóa đơn 9: 92.000đ
+                new OrderDetail { OrderDetailId = 19, OrderId = 9, ProductId = 8, Quantity = 2, UnitPrice = 32000m, LineTotal = 64000m },
+                new OrderDetail { OrderDetailId = 20, OrderId = 9, ProductId = 9, Quantity = 1, UnitPrice = 28000m, LineTotal = 28000m },
+
+                // Hóa đơn 10: 173.000đ
+                new OrderDetail { OrderDetailId = 21, OrderId = 10, ProductId = 10, Quantity = 2, UnitPrice = 42000m, LineTotal = 84000m },
+                new OrderDetail { OrderDetailId = 22, OrderId = 10, ProductId = 11, Quantity = 1, UnitPrice = 89000m, LineTotal = 89000m },
+
+                // Hóa đơn 11: 146.000đ
+                new OrderDetail { OrderDetailId = 23, OrderId = 11, ProductId = 12, Quantity = 2, UnitPrice = 38000m, LineTotal = 76000m },
+                new OrderDetail { OrderDetailId = 24, OrderId = 11, ProductId = 13, Quantity = 2, UnitPrice = 35000m, LineTotal = 70000m },
+
+                // Hóa đơn 12: 99.000đ
+                new OrderDetail { OrderDetailId = 25, OrderId = 12, ProductId = 14, Quantity = 3, UnitPrice = 18000m, LineTotal = 54000m },
+                new OrderDetail { OrderDetailId = 26, OrderId = 12, ProductId = 6, Quantity = 10, UnitPrice = 4500m, LineTotal = 45000m },
+
+                // Hóa đơn 13: 120.000đ
+                new OrderDetail { OrderDetailId = 27, OrderId = 13, ProductId = 15, Quantity = 2, UnitPrice = 45000m, LineTotal = 90000m },
+                new OrderDetail { OrderDetailId = 28, OrderId = 13, ProductId = 1, Quantity = 5, UnitPrice = 6000m, LineTotal = 30000m },
+
+                // Hóa đơn 14: 88.000đ
+                new OrderDetail { OrderDetailId = 29, OrderId = 14, ProductId = 2, Quantity = 3, UnitPrice = 10000m, LineTotal = 30000m },
+                new OrderDetail { OrderDetailId = 30, OrderId = 14, ProductId = 4, Quantity = 1, UnitPrice = 22000m, LineTotal = 22000m },
+                new OrderDetail { OrderDetailId = 31, OrderId = 14, ProductId = 5, Quantity = 2, UnitPrice = 18000m, LineTotal = 36000m },
+
+                // Hóa đơn 15: 87.000đ
+                new OrderDetail { OrderDetailId = 32, OrderId = 15, ProductId = 3, Quantity = 6, UnitPrice = 7500m, LineTotal = 45000m },
+                new OrderDetail { OrderDetailId = 33, OrderId = 15, ProductId = 10, Quantity = 1, UnitPrice = 42000m, LineTotal = 42000m }
+            );
         }
     }
 }

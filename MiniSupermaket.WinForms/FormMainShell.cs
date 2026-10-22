@@ -15,14 +15,51 @@ namespace MiniSupermarket.WinForms
 
         private Form? _activeForm = null;
 
-
+        private Button btnOrders = new Button();
         public FormMainShell()
         {
 
             InitializeComponent();
+            CreateOrdersButton();
+
 
         }
 
+
+        private void CreateOrdersButton()
+        {
+            btnOrders.Name = "btnOrders";
+            btnOrders.Text = "Quản lý đơn hàng";
+
+            btnOrders.Width = btnCategory.Width;
+            btnOrders.Height = btnCategory.Height;
+
+            // Căn trái theo các nút menu hiện tại
+            btnOrders.Left = btnCategory.Left;
+
+            // Đặt bên dưới nút Báo cáo
+            btnOrders.Top = btnReports.Bottom + 5;
+
+            // Giữ phong cách giống Sidebar hiện tại
+            btnOrders.BackColor = Color.FromArgb(24, 30, 48);
+            btnOrders.ForeColor = Color.White;
+            btnOrders.FlatStyle = FlatStyle.Flat;
+            btnOrders.FlatAppearance.BorderSize = 0;
+
+            btnOrders.TextAlign = ContentAlignment.MiddleLeft;
+            btnOrders.Padding = new Padding(10, 0, 0, 0);
+            btnOrders.Cursor = Cursors.Hand;
+
+            // Đăng ký sự kiện Click
+            btnOrders.Click += btnOrders_Click;
+
+            // Thêm nút vào Sidebar
+            panelSidebar.Controls.Add(btnOrders);
+
+            // Hiện nút và đặt phía trên nền Sidebar
+            btnOrders.Visible = true;
+            btnOrders.BringToFront();
+        }
 
         private void FormMainShell_Load(object sender, EventArgs e)
         {
@@ -147,6 +184,8 @@ namespace MiniSupermarket.WinForms
 
                     btnUserManage.Visible = true;
 
+                    btnOrders.Visible = true;
+
                     break;
 
 
@@ -166,6 +205,8 @@ namespace MiniSupermarket.WinForms
 
                     btnUserManage.Visible = false;
 
+                    btnOrders.Visible = false;
+
                     break;
 
 
@@ -184,6 +225,8 @@ namespace MiniSupermarket.WinForms
                     btnCategory.Visible = true;
 
                     btnProduct.Visible = true;
+
+                    btnOrders.Visible = false;
 
                     break;
 
@@ -267,27 +310,27 @@ namespace MiniSupermarket.WinForms
         }
 
 
-      private void btnLogout_Click(object sender, EventArgs e)
-{
-    var confirm = MessageBox.Show(
-        "Bạn có chắc chắn muốn đăng xuất phiên làm việc?",
-        "Xác nhận",
-        MessageBoxButtons.YesNo,
-        MessageBoxIcon.Question);
+        private void btnLogout_Click(object sender, EventArgs e)
+        {
+            var confirm = MessageBox.Show(
+                "Bạn có chắc chắn muốn đăng xuất phiên làm việc?",
+                "Xác nhận",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
 
-    if (confirm == DialogResult.Yes)
-    {
-        SessionManager.JwtToken = string.Empty;
-        SessionManager.CurrentUsername = string.Empty;
-        SessionManager.CurrentRole = string.Empty;
+            if (confirm == DialogResult.Yes)
+            {
+                SessionManager.JwtToken = string.Empty;
+                SessionManager.CurrentUsername = string.Empty;
+                SessionManager.CurrentRole = string.Empty;
 
-        this.Hide();
+                this.Hide();
 
-        new FormLogin().ShowDialog();
+                new FormLogin().ShowDialog();
 
-        this.Close();
-    }
-}
+                this.Close();
+            }
+        }
         private void btnReports_Click(object sender, EventArgs e)
         {
             if (SessionManager.CurrentRole != "Admin")
@@ -307,7 +350,29 @@ namespace MiniSupermarket.WinForms
                 btnReports);
         }
 
-        
+
+        private void btnOrders_Click(object? sender, EventArgs e)
+        {
+            if (!string.Equals(
+                SessionManager.CurrentRole,
+                "Admin",
+                StringComparison.OrdinalIgnoreCase))
+            {
+                MessageBox.Show(
+                    "Chỉ Admin được xem danh sách đơn hàng.",
+                    "Từ chối truy cập",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+
+                return;
+            }
+
+            OpenChildForm(
+                new FormOrderManagement(),
+                "QUẢN LÝ ĐƠN HÀNG",
+                btnOrders);
+        }
+
         private void btnUserManage_Click(object sender, EventArgs e)
         {
             OpenChildForm(
@@ -315,5 +380,7 @@ namespace MiniSupermarket.WinForms
                 "QUẢN TRỊ TÀI KHOẢN VÀ PHÂN QUYỀN HỆ THỐNG",
                 btnUserManage);
         }
+
+       
     }
 }

@@ -1,4 +1,5 @@
-﻿namespace MiniSupermarket.WinForms
+﻿
+namespace MiniSupermarket.WinForms
 {
     partial class FormQuickReport
     {
@@ -6,25 +7,29 @@
 
         private Panel panelHeader;
         private Label lblTitle;
-        private Label lblDate;
-        private DateTimePicker dtpReportDate;
+        private Label lblSubtitle;
         private Button btnRunReport;
+     
 
         private Panel panelOrders;
         private Panel panelRevenue;
-        private Panel panelBestSeller;
+        private Panel panelCashiers;
 
         private Label lblTitleOrders;
         private Label lblTitleRevenue;
-        private Label lblTitleBestSeller;
+        private Label lblTitleCashiers;
 
         private Label lblTotalOrders;
         private Label lblTotalRevenue;
-        private Label lblBestSeller;
+        private Label lblTotalCashiers;
+
+        private Label lblTableTitle;
+        private Label lblStatus;
+        private DataGridView dgvCashierRevenue;
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing && (components != null))
+            if (disposing && components != null)
                 components.Dispose();
 
             base.Dispose(disposing);
@@ -32,278 +37,234 @@
 
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
+            components = new System.ComponentModel.Container();
 
-            this.panelHeader = new Panel();
-            this.lblTitle = new Label();
-            this.lblDate = new Label();
-            this.dtpReportDate = new DateTimePicker();
-            this.btnRunReport = new Button();
+            panelHeader = new Panel();
+            lblTitle = new Label();
+            lblSubtitle = new Label();
+            btnRunReport = new Button();
+           
 
-            this.panelOrders = new Panel();
-            this.panelRevenue = new Panel();
-            this.panelBestSeller = new Panel();
+            panelOrders = new Panel();
+            panelRevenue = new Panel();
+            panelCashiers = new Panel();
 
-            this.lblTitleOrders = new Label();
-            this.lblTitleRevenue = new Label();
-            this.lblTitleBestSeller = new Label();
+            lblTitleOrders = new Label();
+            lblTitleRevenue = new Label();
+            lblTitleCashiers = new Label();
 
-            this.lblTotalOrders = new Label();
-            this.lblTotalRevenue = new Label();
-            this.lblBestSeller = new Label();
+            lblTotalOrders = new Label();
+            lblTotalRevenue = new Label();
+            lblTotalCashiers = new Label();
 
-            // =========================
+            lblTableTitle = new Label();
+            lblStatus = new Label();
+            dgvCashierRevenue = new DataGridView();
+
+            SuspendLayout();
+
             // FORM
-            // =========================
-            this.SuspendLayout();
+            AutoScaleMode = AutoScaleMode.Font;
+            BackColor = Color.FromArgb(245, 247, 250);
+            ClientSize = new Size(1050, 650);
+            FormBorderStyle = FormBorderStyle.None;
+            Name = "FormQuickReport";
+            Text = "Báo cáo doanh thu";
 
-            this.ClientSize = new Size(1050, 600);
-            this.FormBorderStyle = FormBorderStyle.None;
-            this.Name = "FormQuickReport";
-            this.Text = "Báo cáo doanh thu";
+            // HEADER
+            panelHeader.Dock = DockStyle.Top;
+            panelHeader.Height = 115;
+            panelHeader.BackColor = Color.White;
+            panelHeader.Padding = new Padding(25, 15, 25, 10);
 
-            // =========================
-            // PANEL HEADER
-            // =========================
-            this.panelHeader.Dock = DockStyle.Top;
-            this.panelHeader.Height = 110;
-            this.panelHeader.BackColor = Color.White;
+            lblTitle.AutoSize = true;
+            lblTitle.Font = new Font("Segoe UI", 20F, FontStyle.Bold);
+            lblTitle.ForeColor = Color.FromArgb(35, 45, 60);
+            lblTitle.Location = new Point(25, 15);
+            lblTitle.Text = "BÁO CÁO DOANH THU";
 
-            // TITLE
-            this.lblTitle.AutoSize = true;
-            this.lblTitle.Font = new Font(
-                "Segoe UI",
-                20F,
-                FontStyle.Bold);
+            lblSubtitle.AutoSize = true;
+            lblSubtitle.Font = new Font("Segoe UI", 9.5F);
+            lblSubtitle.ForeColor = Color.DimGray;
+            lblSubtitle.Location = new Point(28, 58);
+            lblSubtitle.Text = "Tổng hợp hóa đơn và doanh thu theo nhân viên";
 
-            this.lblTitle.Location = new Point(30, 20);
-            this.lblTitle.Text = "BÁO CÁO DOANH THU";
+            btnRunReport.BackColor = Color.FromArgb(41, 100, 180);
+            btnRunReport.FlatStyle = FlatStyle.Flat;
+            btnRunReport.FlatAppearance.BorderSize = 0;
+            btnRunReport.ForeColor = Color.White;
+            btnRunReport.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold);
+            btnRunReport.Size = new Size(145, 36);
+            btnRunReport.Location = new Point(680, 35);
+            btnRunReport.Text = "TẢI BÁO CÁO";
+            btnRunReport.Cursor = Cursors.Hand;
+            btnRunReport.Anchor = AnchorStyles.Top | AnchorStyles.Right;
 
-            // DATE LABEL
-            this.lblDate.AutoSize = true;
-            this.lblDate.Font = new Font(
-                "Segoe UI",
-                10F);
+            
 
-            this.lblDate.Location = new Point(32, 70);
-            this.lblDate.Text = "Ngày báo cáo:";
+            panelHeader.Controls.Add(lblTitle);
+            panelHeader.Controls.Add(lblSubtitle);
+            panelHeader.Controls.Add(btnRunReport);
+           
 
-            // DATE PICKER
-            this.dtpReportDate.Format =
-                DateTimePickerFormat.Short;
-
-            this.dtpReportDate.Location =
-                new Point(135, 67);
-
-            this.dtpReportDate.Size =
-                new Size(130, 27);
-
-            // BUTTON
-            this.btnRunReport.BackColor =
-                Color.FromArgb(41, 100, 180);
-
-            this.btnRunReport.FlatStyle =
-                FlatStyle.Flat;
-
-            this.btnRunReport.FlatAppearance.BorderSize = 0;
-
-            this.btnRunReport.ForeColor =
-                Color.White;
-
-            this.btnRunReport.Font =
-                new Font(
-                    "Segoe UI",
-                    10F,
-                    FontStyle.Bold);
-
-            this.btnRunReport.Location =
-                new Point(285, 65);
-
-            this.btnRunReport.Size =
-                new Size(150, 32);
-
-            this.btnRunReport.Text =
-                "XEM BÁO CÁO";
-
-            this.btnRunReport.Cursor =
-                Cursors.Hand;
-
-            // ADD HEADER CONTROLS
-            this.panelHeader.Controls.Add(this.lblTitle);
-            this.panelHeader.Controls.Add(this.lblDate);
-            this.panelHeader.Controls.Add(this.dtpReportDate);
-            this.panelHeader.Controls.Add(this.btnRunReport);
-
-            // =========================
             // CARD 1 - ORDERS
-            // =========================
-            this.panelOrders.Location =
-                new Point(30, 145);
+            panelOrders.Location = new Point(25, 135);
+            panelOrders.Size = new Size(310, 120);
+            panelOrders.BackColor = Color.FromArgb(52, 152, 219);
 
-            this.panelOrders.Size =
-                new Size(300, 180);
+            lblTitleOrders.AutoSize = true;
+            lblTitleOrders.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            lblTitleOrders.ForeColor = Color.White;
+            lblTitleOrders.Location = new Point(18, 18);
+            lblTitleOrders.Text = "TỔNG SỐ HÓA ĐƠN";
 
-            this.panelOrders.BackColor =
-                Color.FromArgb(52, 152, 219);
+            lblTotalOrders.AutoSize = true;
+            lblTotalOrders.Font = new Font("Segoe UI", 25F, FontStyle.Bold);
+            lblTotalOrders.ForeColor = Color.White;
+            lblTotalOrders.Location = new Point(18, 48);
+            lblTotalOrders.Text = "0";
 
-            this.lblTitleOrders.AutoSize = true;
+            panelOrders.Controls.Add(lblTitleOrders);
+            panelOrders.Controls.Add(lblTotalOrders);
 
-            this.lblTitleOrders.Font =
-                new Font(
-                    "Segoe UI",
-                    12F,
-                    FontStyle.Bold);
-
-            this.lblTitleOrders.ForeColor =
-                Color.White;
-
-            this.lblTitleOrders.Location =
-                new Point(20, 20);
-
-            this.lblTitleOrders.Text =
-                "TỔNG SỐ HÓA ĐƠN";
-
-            this.lblTotalOrders.AutoSize = true;
-
-            this.lblTotalOrders.Font =
-                new Font(
-                    "Segoe UI",
-                    32F,
-                    FontStyle.Bold);
-
-            this.lblTotalOrders.ForeColor =
-                Color.White;
-
-            this.lblTotalOrders.Location =
-                new Point(20, 65);
-
-            this.lblTotalOrders.Text = "0";
-
-            this.panelOrders.Controls.Add(
-                this.lblTitleOrders);
-
-            this.panelOrders.Controls.Add(
-                this.lblTotalOrders);
-
-            // =========================
             // CARD 2 - REVENUE
-            // =========================
-            this.panelRevenue.Location =
-                new Point(360, 145);
+            panelRevenue.Location = new Point(355, 135);
+            panelRevenue.Size = new Size(310, 120);
+            panelRevenue.BackColor = Color.FromArgb(39, 174, 96);
 
-            this.panelRevenue.Size =
-                new Size(300, 180);
+            lblTitleRevenue.AutoSize = true;
+            lblTitleRevenue.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            lblTitleRevenue.ForeColor = Color.White;
+            lblTitleRevenue.Location = new Point(18, 18);
+            lblTitleRevenue.Text = "TỔNG DOANH THU";
 
-            this.panelRevenue.BackColor =
-                Color.FromArgb(39, 174, 96);
+            lblTotalRevenue.AutoSize = true;
+            lblTotalRevenue.Font = new Font("Segoe UI", 22F, FontStyle.Bold);
+            lblTotalRevenue.ForeColor = Color.White;
+            lblTotalRevenue.Location = new Point(18, 50);
+            lblTotalRevenue.Text = "0 ₫";
 
-            this.lblTitleRevenue.AutoSize = true;
+            panelRevenue.Controls.Add(lblTitleRevenue);
+            panelRevenue.Controls.Add(lblTotalRevenue);
 
-            this.lblTitleRevenue.Font =
-                new Font(
-                    "Segoe UI",
-                    12F,
-                    FontStyle.Bold);
+            // CARD 3 - CASHIERS
+            panelCashiers.Location = new Point(685, 135);
+            panelCashiers.Size = new Size(310, 120);
+            panelCashiers.BackColor = Color.FromArgb(230, 126, 34);
 
-            this.lblTitleRevenue.ForeColor =
-                Color.White;
+            lblTitleCashiers.AutoSize = true;
+            lblTitleCashiers.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            lblTitleCashiers.ForeColor = Color.White;
+            lblTitleCashiers.Location = new Point(18, 18);
+            lblTitleCashiers.Text = "SỐ NHÂN VIÊN CÓ DOANH THU";
 
-            this.lblTitleRevenue.Location =
-                new Point(20, 20);
+            lblTotalCashiers.AutoSize = true;
+            lblTotalCashiers.Font = new Font("Segoe UI", 25F, FontStyle.Bold);
+            lblTotalCashiers.ForeColor = Color.White;
+            lblTotalCashiers.Location = new Point(18, 48);
+            lblTotalCashiers.Text = "0";
 
-            this.lblTitleRevenue.Text =
-                "TỔNG DOANH THU";
+            panelCashiers.Controls.Add(lblTitleCashiers);
+            panelCashiers.Controls.Add(lblTotalCashiers);
 
-            this.lblTotalRevenue.AutoSize = true;
+            // TABLE TITLE
+            lblTableTitle.AutoSize = true;
+            lblTableTitle.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
+            lblTableTitle.ForeColor = Color.FromArgb(35, 45, 60);
+            lblTableTitle.Location = new Point(25, 275);
+            lblTableTitle.Text = "CHI TIẾT DOANH THU THEO NHÂN VIÊN";
 
-            this.lblTotalRevenue.Font =
-                new Font(
-                    "Segoe UI",
-                    24F,
-                    FontStyle.Bold);
+            // DATA GRID VIEW
+            dgvCashierRevenue.Location = new Point(25, 315);
+            dgvCashierRevenue.Size = new Size(970, 265);
+            dgvCashierRevenue.Anchor =
+                AnchorStyles.Top | AnchorStyles.Bottom |
+                AnchorStyles.Left | AnchorStyles.Right;
 
-            this.lblTotalRevenue.ForeColor =
-                Color.White;
+            dgvCashierRevenue.AllowUserToAddRows = false;
+            dgvCashierRevenue.AllowUserToDeleteRows = false;
+            dgvCashierRevenue.ReadOnly = true;
+            dgvCashierRevenue.MultiSelect = false;
+            dgvCashierRevenue.SelectionMode =
+                DataGridViewSelectionMode.FullRowSelect;
+            dgvCashierRevenue.AutoGenerateColumns = false;
+            dgvCashierRevenue.AutoSizeColumnsMode =
+                DataGridViewAutoSizeColumnsMode.Fill;
+            dgvCashierRevenue.RowHeadersVisible = false;
+            dgvCashierRevenue.BackgroundColor = Color.White;
+            dgvCashierRevenue.BorderStyle = BorderStyle.None;
+            dgvCashierRevenue.GridColor = Color.FromArgb(225, 230, 235);
+            dgvCashierRevenue.Font = new Font("Segoe UI", 10F);
+            dgvCashierRevenue.ColumnHeadersHeight = 42;
+            dgvCashierRevenue.RowTemplate.Height = 36;
+            dgvCashierRevenue.EnableHeadersVisualStyles = false;
 
-            this.lblTotalRevenue.Location =
-                new Point(20, 70);
+            dgvCashierRevenue.ColumnHeadersDefaultCellStyle.BackColor =
+                Color.FromArgb(235, 240, 246);
+            dgvCashierRevenue.ColumnHeadersDefaultCellStyle.ForeColor =
+                Color.FromArgb(35, 45, 60);
+            dgvCashierRevenue.ColumnHeadersDefaultCellStyle.Font =
+                new Font("Segoe UI", 10F, FontStyle.Bold);
+            dgvCashierRevenue.ColumnHeadersDefaultCellStyle.Alignment =
+                DataGridViewContentAlignment.MiddleLeft;
 
-            this.lblTotalRevenue.Text =
-                "0 ₫";
+            dgvCashierRevenue.DefaultCellStyle.SelectionBackColor =
+                Color.FromArgb(220, 235, 250);
+            dgvCashierRevenue.DefaultCellStyle.SelectionForeColor =
+                Color.FromArgb(35, 45, 60);
+            dgvCashierRevenue.AlternatingRowsDefaultCellStyle.BackColor =
+                Color.FromArgb(248, 250, 252);
 
-            this.panelRevenue.Controls.Add(
-                this.lblTitleRevenue);
+            dgvCashierRevenue.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = "colSTT",
+                HeaderText = "STT",
+                FillWeight = 12
+            });
 
-            this.panelRevenue.Controls.Add(
-                this.lblTotalRevenue);
+            dgvCashierRevenue.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = "colCashier",
+                HeaderText = "Tên nhân viên",
+                FillWeight = 45
+            });
 
-            // =========================
-            // CARD 3 - BEST SELLER
-            // =========================
-            this.panelBestSeller.Location =
-                new Point(690, 145);
+            dgvCashierRevenue.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = "colOrders",
+                HeaderText = "Số hóa đơn",
+                FillWeight = 20
+            });
 
-            this.panelBestSeller.Size =
-                new Size(300, 180);
+            dgvCashierRevenue.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = "colRevenue",
+                HeaderText = "Tổng doanh thu (VNĐ)",
+                FillWeight = 35
+            });
 
-            this.panelBestSeller.BackColor =
-                Color.FromArgb(230, 126, 34);
+            // STATUS
+            lblStatus.AutoSize = false;
+            lblStatus.Location = new Point(25, 590);
+            lblStatus.Size = new Size(970, 35);
+            lblStatus.Anchor =
+                AnchorStyles.Bottom | AnchorStyles.Left |
+                AnchorStyles.Right;
+            lblStatus.Font = new Font("Segoe UI", 9F);
+            lblStatus.ForeColor = Color.DimGray;
+            lblStatus.TextAlign = ContentAlignment.MiddleLeft;
+            lblStatus.Text = "Nhấn TẢI BÁO CÁO để lấy dữ liệu từ máy chủ.";
 
-            this.lblTitleBestSeller.AutoSize = true;
+            // ADD CONTROLS
+            Controls.Add(panelHeader);
+            Controls.Add(panelOrders);
+            Controls.Add(panelRevenue);
+            Controls.Add(panelCashiers);
+            Controls.Add(lblTableTitle);
+            Controls.Add(dgvCashierRevenue);
+            Controls.Add(lblStatus);
 
-            this.lblTitleBestSeller.Font =
-                new Font(
-                    "Segoe UI",
-                    12F,
-                    FontStyle.Bold);
-
-            this.lblTitleBestSeller.ForeColor =
-                Color.White;
-
-            this.lblTitleBestSeller.Location =
-                new Point(20, 20);
-
-            this.lblTitleBestSeller.Text =
-                "MẶT HÀNG BÁN CHẠY NHẤT";
-
-            this.lblBestSeller.AutoSize = false;
-
-            this.lblBestSeller.Font =
-                new Font(
-                    "Segoe UI",
-                    17F,
-                    FontStyle.Bold);
-
-            this.lblBestSeller.ForeColor =
-                Color.White;
-
-            this.lblBestSeller.Location =
-                new Point(20, 70);
-
-            this.lblBestSeller.Size =
-                new Size(260, 70);
-
-            this.lblBestSeller.Text =
-                "---";
-
-            this.lblBestSeller.TextAlign =
-                ContentAlignment.MiddleLeft;
-
-            this.panelBestSeller.Controls.Add(
-                this.lblTitleBestSeller);
-
-            this.panelBestSeller.Controls.Add(
-                this.lblBestSeller);
-
-            // =========================
-            // ADD TO FORM
-            // =========================
-            this.Controls.Add(this.panelHeader);
-            this.Controls.Add(this.panelOrders);
-            this.Controls.Add(this.panelRevenue);
-            this.Controls.Add(this.panelBestSeller);
-
-            this.ResumeLayout(false);
+            ResumeLayout(false);
         }
     }
 }

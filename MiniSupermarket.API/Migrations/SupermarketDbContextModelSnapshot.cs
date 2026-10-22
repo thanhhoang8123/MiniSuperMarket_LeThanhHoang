@@ -346,6 +346,173 @@ namespace MiniSupermarket.API.Migrations
                     b.HasIndex("CustomerId");
 
                     b.ToTable("Orders");
+
+                    b.HasData(
+                        new
+                        {
+                            OrderId = 1,
+                            CashierUsername = "cashier01",
+                            CreatedDate = new DateTime(2026, 10, 10, 8, 15, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = 1,
+                            FinalAmount = 54500m,
+                            OrderCode = "PT-SEED-20261015-001",
+                            RewardPoints = 2,
+                            TotalItems = 9
+                        },
+                        new
+                        {
+                            OrderId = 2,
+                            CashierUsername = "cashier02",
+                            CreatedDate = new DateTime(2026, 10, 10, 9, 20, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = 2,
+                            FinalAmount = 52000m,
+                            OrderCode = "PT-SEED-20261015-002",
+                            RewardPoints = 1,
+                            TotalItems = 5
+                        },
+                        new
+                        {
+                            OrderId = 3,
+                            CashierUsername = "cashier03",
+                            CreatedDate = new DateTime(2026, 10, 10, 10, 35, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = 3,
+                            FinalAmount = 81000m,
+                            OrderCode = "PT-SEED-20261015-003",
+                            RewardPoints = 1,
+                            TotalItems = 12
+                        },
+                        new
+                        {
+                            OrderId = 4,
+                            CashierUsername = "cashier01",
+                            CreatedDate = new DateTime(2026, 10, 11, 8, 45, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = 4,
+                            FinalAmount = 209000m,
+                            OrderCode = "PT-SEED-20261015-004",
+                            RewardPoints = 3,
+                            TotalItems = 3
+                        },
+                        new
+                        {
+                            OrderId = 5,
+                            CashierUsername = "cashier04",
+                            CreatedDate = new DateTime(2026, 10, 11, 11, 10, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = 5,
+                            FinalAmount = 96000m,
+                            OrderCode = "PT-SEED-20261015-005",
+                            RewardPoints = 2,
+                            TotalItems = 6
+                        },
+                        new
+                        {
+                            OrderId = 6,
+                            CashierUsername = "cashier05",
+                            CreatedDate = new DateTime(2026, 10, 11, 14, 30, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = 6,
+                            FinalAmount = 60000m,
+                            OrderCode = "PT-SEED-20261015-006",
+                            RewardPoints = 1,
+                            TotalItems = 4
+                        },
+                        new
+                        {
+                            OrderId = 7,
+                            CashierUsername = "cashier02",
+                            CreatedDate = new DateTime(2026, 10, 12, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = 7,
+                            FinalAmount = 102500m,
+                            OrderCode = "PT-SEED-20261015-007",
+                            RewardPoints = 2,
+                            TotalItems = 9
+                        },
+                        new
+                        {
+                            OrderId = 8,
+                            CashierUsername = "cashier06",
+                            CreatedDate = new DateTime(2026, 10, 12, 10, 50, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = 8,
+                            FinalAmount = 175000m,
+                            OrderCode = "PT-SEED-20261015-008",
+                            RewardPoints = 3,
+                            TotalItems = 5
+                        },
+                        new
+                        {
+                            OrderId = 9,
+                            CashierUsername = "cashier03",
+                            CreatedDate = new DateTime(2026, 10, 12, 15, 25, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = 9,
+                            FinalAmount = 92000m,
+                            OrderCode = "PT-SEED-20261015-009",
+                            RewardPoints = 1,
+                            TotalItems = 3
+                        },
+                        new
+                        {
+                            OrderId = 10,
+                            CashierUsername = "cashier04",
+                            CreatedDate = new DateTime(2026, 10, 13, 8, 20, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = 10,
+                            FinalAmount = 173000m,
+                            OrderCode = "PT-SEED-20261015-010",
+                            RewardPoints = 2,
+                            TotalItems = 3
+                        },
+                        new
+                        {
+                            OrderId = 11,
+                            CashierUsername = "cashier01",
+                            CreatedDate = new DateTime(2026, 10, 13, 10, 15, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = 11,
+                            FinalAmount = 146000m,
+                            OrderCode = "PT-SEED-20261015-011",
+                            RewardPoints = 3,
+                            TotalItems = 4
+                        },
+                        new
+                        {
+                            OrderId = 12,
+                            CashierUsername = "cashier05",
+                            CreatedDate = new DateTime(2026, 10, 13, 13, 40, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = 12,
+                            FinalAmount = 99000m,
+                            OrderCode = "PT-SEED-20261015-012",
+                            RewardPoints = 1,
+                            TotalItems = 13
+                        },
+                        new
+                        {
+                            OrderId = 13,
+                            CashierUsername = "cashier06",
+                            CreatedDate = new DateTime(2026, 10, 14, 9, 30, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = 13,
+                            FinalAmount = 120000m,
+                            OrderCode = "PT-SEED-20261015-013",
+                            RewardPoints = 2,
+                            TotalItems = 7
+                        },
+                        new
+                        {
+                            OrderId = 14,
+                            CashierUsername = "cashier02",
+                            CreatedDate = new DateTime(2026, 10, 14, 14, 10, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = 14,
+                            FinalAmount = 88000m,
+                            OrderCode = "PT-SEED-20261015-014",
+                            RewardPoints = 3,
+                            TotalItems = 6
+                        },
+                        new
+                        {
+                            OrderId = 15,
+                            CashierUsername = "cashier03",
+                            CreatedDate = new DateTime(2026, 10, 15, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                            CustomerId = 15,
+                            FinalAmount = 87000m,
+                            OrderCode = "PT-SEED-20261015-015",
+                            RewardPoints = 1,
+                            TotalItems = 7
+                        });
                 });
 
             modelBuilder.Entity("MiniSupermarket.API.Models.OrderDetail", b =>
@@ -378,6 +545,305 @@ namespace MiniSupermarket.API.Migrations
                     b.HasIndex("ProductId");
 
                     b.ToTable("OrderDetails");
+
+                    b.HasData(
+                        new
+                        {
+                            OrderDetailId = 1,
+                            LineTotal = 12000m,
+                            OrderId = 1,
+                            ProductId = 1,
+                            Quantity = 2,
+                            UnitPrice = 6000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 2,
+                            LineTotal = 20000m,
+                            OrderId = 1,
+                            ProductId = 2,
+                            Quantity = 2,
+                            UnitPrice = 10000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 3,
+                            LineTotal = 22500m,
+                            OrderId = 1,
+                            ProductId = 6,
+                            Quantity = 5,
+                            UnitPrice = 4500m
+                        },
+                        new
+                        {
+                            OrderDetailId = 4,
+                            LineTotal = 30000m,
+                            OrderId = 2,
+                            ProductId = 3,
+                            Quantity = 4,
+                            UnitPrice = 7500m
+                        },
+                        new
+                        {
+                            OrderDetailId = 5,
+                            LineTotal = 22000m,
+                            OrderId = 2,
+                            ProductId = 4,
+                            Quantity = 1,
+                            UnitPrice = 22000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 6,
+                            LineTotal = 36000m,
+                            OrderId = 3,
+                            ProductId = 5,
+                            Quantity = 2,
+                            UnitPrice = 18000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 7,
+                            LineTotal = 45000m,
+                            OrderId = 3,
+                            ProductId = 6,
+                            Quantity = 10,
+                            UnitPrice = 4500m
+                        },
+                        new
+                        {
+                            OrderDetailId = 8,
+                            LineTotal = 145000m,
+                            OrderId = 4,
+                            ProductId = 7,
+                            Quantity = 1,
+                            UnitPrice = 145000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 9,
+                            LineTotal = 64000m,
+                            OrderId = 4,
+                            ProductId = 8,
+                            Quantity = 2,
+                            UnitPrice = 32000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 10,
+                            LineTotal = 40000m,
+                            OrderId = 5,
+                            ProductId = 2,
+                            Quantity = 4,
+                            UnitPrice = 10000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 11,
+                            LineTotal = 56000m,
+                            OrderId = 5,
+                            ProductId = 9,
+                            Quantity = 2,
+                            UnitPrice = 28000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 12,
+                            LineTotal = 18000m,
+                            OrderId = 6,
+                            ProductId = 1,
+                            Quantity = 3,
+                            UnitPrice = 6000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 13,
+                            LineTotal = 42000m,
+                            OrderId = 6,
+                            ProductId = 10,
+                            Quantity = 1,
+                            UnitPrice = 42000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 14,
+                            LineTotal = 44000m,
+                            OrderId = 7,
+                            ProductId = 4,
+                            Quantity = 2,
+                            UnitPrice = 22000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 15,
+                            LineTotal = 36000m,
+                            OrderId = 7,
+                            ProductId = 5,
+                            Quantity = 2,
+                            UnitPrice = 18000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 16,
+                            LineTotal = 22500m,
+                            OrderId = 7,
+                            ProductId = 6,
+                            Quantity = 5,
+                            UnitPrice = 4500m
+                        },
+                        new
+                        {
+                            OrderDetailId = 17,
+                            LineTotal = 145000m,
+                            OrderId = 8,
+                            ProductId = 7,
+                            Quantity = 1,
+                            UnitPrice = 145000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 18,
+                            LineTotal = 30000m,
+                            OrderId = 8,
+                            ProductId = 3,
+                            Quantity = 4,
+                            UnitPrice = 7500m
+                        },
+                        new
+                        {
+                            OrderDetailId = 19,
+                            LineTotal = 64000m,
+                            OrderId = 9,
+                            ProductId = 8,
+                            Quantity = 2,
+                            UnitPrice = 32000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 20,
+                            LineTotal = 28000m,
+                            OrderId = 9,
+                            ProductId = 9,
+                            Quantity = 1,
+                            UnitPrice = 28000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 21,
+                            LineTotal = 84000m,
+                            OrderId = 10,
+                            ProductId = 10,
+                            Quantity = 2,
+                            UnitPrice = 42000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 22,
+                            LineTotal = 89000m,
+                            OrderId = 10,
+                            ProductId = 11,
+                            Quantity = 1,
+                            UnitPrice = 89000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 23,
+                            LineTotal = 76000m,
+                            OrderId = 11,
+                            ProductId = 12,
+                            Quantity = 2,
+                            UnitPrice = 38000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 24,
+                            LineTotal = 70000m,
+                            OrderId = 11,
+                            ProductId = 13,
+                            Quantity = 2,
+                            UnitPrice = 35000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 25,
+                            LineTotal = 54000m,
+                            OrderId = 12,
+                            ProductId = 14,
+                            Quantity = 3,
+                            UnitPrice = 18000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 26,
+                            LineTotal = 45000m,
+                            OrderId = 12,
+                            ProductId = 6,
+                            Quantity = 10,
+                            UnitPrice = 4500m
+                        },
+                        new
+                        {
+                            OrderDetailId = 27,
+                            LineTotal = 90000m,
+                            OrderId = 13,
+                            ProductId = 15,
+                            Quantity = 2,
+                            UnitPrice = 45000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 28,
+                            LineTotal = 30000m,
+                            OrderId = 13,
+                            ProductId = 1,
+                            Quantity = 5,
+                            UnitPrice = 6000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 29,
+                            LineTotal = 30000m,
+                            OrderId = 14,
+                            ProductId = 2,
+                            Quantity = 3,
+                            UnitPrice = 10000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 30,
+                            LineTotal = 22000m,
+                            OrderId = 14,
+                            ProductId = 4,
+                            Quantity = 1,
+                            UnitPrice = 22000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 31,
+                            LineTotal = 36000m,
+                            OrderId = 14,
+                            ProductId = 5,
+                            Quantity = 2,
+                            UnitPrice = 18000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 32,
+                            LineTotal = 45000m,
+                            OrderId = 15,
+                            ProductId = 3,
+                            Quantity = 6,
+                            UnitPrice = 7500m
+                        },
+                        new
+                        {
+                            OrderDetailId = 33,
+                            LineTotal = 42000m,
+                            OrderId = 15,
+                            ProductId = 10,
+                            Quantity = 1,
+                            UnitPrice = 42000m
+                        });
                 });
 
             modelBuilder.Entity("MiniSupermarket.API.Models.Product", b =>
