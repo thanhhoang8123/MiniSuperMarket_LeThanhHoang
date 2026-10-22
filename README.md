@@ -1,234 +1,80 @@
- MiniSupermarket System
+🛒 HỆ THỐNG QUẢN LÝ SIÊU THỊ MINI (MINISUPERMARKET SYSTEM)
+Môn học: Lập trình Ứng dụng .NET Core (Mã môn: 229162)
+Buổi thực hành: Buổi 3 - Tích hợp SQL Server và Entity Framework Core Code-First
 
-📚 Thông tin
-- Môn học: Lập trình Ứng dụng .NET Core
-- Buổi: 3
-- Đề tài: Hệ thống quản lý siêu thị mini
-- Kiến trúc: Client - Server
-
----
-
-🎯 Mục tiêu Buổi 3
-
-Chuyển hệ thống từ cơ chế lưu trữ dữ liệu tạm thời trên RAM sang
-**Microsoft SQL Server** thông qua **Entity Framework Core (EF Core)**.
-
-Các nội dung chính:
-- SQL Server
+🏗️ 1. Mục tiêu buổi thực hành
+- Kết nối ASP.NET Core Web API với SQL Server.
+- Xây dựng Entity Model và DbContext.
+- Sử dụng Entity Framework Core (EF Core) theo phương pháp Code-First.
+- Tạo cơ sở dữ liệu bằng EF Core Migrations.
+- Chuyển API quản lý dữ liệu sang EF Core và xử lý bất đồng bộ.
+- Kết nối WinForms Client với API sử dụng dữ liệu thực tế.
+🛠️ 2. Công nghệ sử dụng
+- C# / .NET 8.0
+- ASP.NET Core Web API
+- SQL Server và SQL Server Management Studio (SSMS)
 - Entity Framework Core
-- Code-First
-- DbContext
-- EF Core Migrations
-- LINQ và async/await
-- CRUD với dữ liệu thực tế
-- Kiểm tra dữ liệu bằng SSMS
+- EF Core SQL Server Provider
+- EF Core Tools
+- LINQ, async / await
+- Swagger UI
+- Windows Forms và HttpClient
+🗄️ 3. Kiến trúc truy cập dữ liệu
+Luồng xử lý chính:
 
----
-🗄️ 1. Tích hợp SQL Server
+WinForms Client → HTTP Request → ASP.NET Core Web API → EF Core → SQL Server
 
-Ở Buổi 1 và Buổi 2, dữ liệu được lưu tạm trong bộ nhớ RAM nên
-sẽ mất khi Web API khởi động lại.
+Web API chịu trách nhiệm xử lý nghiệp vụ và dữ liệu; WinForms chỉ gọi API, nhận JSON và hiển thị kết quả.
+🧱 4. Entity Model và DbContext
+4.1. Model Category
+Model đại diện cho bảng danh mục, thường có các thuộc tính:
+- CategoryId: khóa chính, tự tăng.
+- CategoryName: tên danh mục, bắt buộc và giới hạn độ dài.
+- Description: mô tả tùy chọn.
+- Products: quan hệ một-nhiều với sản phẩm nếu được cấu hình trong Model.
+4.2. Model Product
+Model sản phẩm có các thông tin như mã vạch, tên sản phẩm, giá bán, số lượng tồn kho và khóa ngoại CategoryId liên kết danh mục.
+4.3. SupermarketDbContext
+DbContext đại diện cho phiên làm việc với cơ sở dữ liệu. Các DbSet<T> ánh xạ tới các bảng dữ liệu, ví dụ Categories và Products.
 
-Buổi 3 chuyển sang lưu trữ lâu dài bằng SQL Server:
+Có thể cấu hình dữ liệu khởi tạo (data seeding) bằng OnModelCreating() và HasData().
+⚙️ 5. Cấu hình SQL Server và EF Core
+Bước 1. Cài NuGet
+Trong project API, cài các gói EF Core tương thích với phiên bản .NET đang dùng, gồm SQL Server Provider và EF Core Tools.
+Bước 2. Khai báo Connection String
+Trong appsettings.json, cấu hình ConnectionStrings:DefaultConnection trỏ tới SQL Server và database của dự án.
+Không commit mật khẩu hoặc thông tin bí mật của môi trường thật lên Git. Nếu dùng SQL Authentication, nên cấu hình bằng User Secrets hoặc biến môi trường.
 
-```text
-MiniSupermarketDb
-├── Categories
-└── Products
+Bước 3. Đăng ký DbContext
+Trong Program.cs, đăng ký SupermarketDbContext qua Dependency Injection và cấu hình UseSqlServer(connectionString).
+Bước 4. Tạo database bằng Migration
+Mở Package Manager Console hoặc Terminal tại đúng project, tạo migration và cập nhật database bằng EF Core Tools. Tên migration phụ thuộc vào nội dung thay đổi của Model.
 
-Dữ liệu được lưu trực tiếp trong cơ sở dữ liệu và vẫn tồn tại
-sau khi tắt hoặc khởi động lại ứng dụng.
-
-🔧 2. Entity Framework Core
-
-Sử dụng EF Core theo phương pháp Code-First.
-
-Các package chính:
-
-Microsoft.EntityFrameworkCore.SqlServer
-Microsoft.EntityFrameworkCore.Tools
-Microsoft.EntityFrameworkCore.Design
-
-EF Core đóng vai trò kết nối giữa các Model C# và SQL Server.
-
-📦 3. DbContext
-
-Xây dựng:
-
-SupermarketDbContext
-
-DbContext quản lý các Entity và kết nối đến SQL Server.
-
-Các DbSet chính:
-
-DbSet<Category>
-DbSet<Product>
-
-Connection String được cấu hình trong:
-
-appsettings.json
-
-Sau đó đăng ký SupermarketDbContext vào Program.cs
-thông qua Dependency Injection.
-
-🔄 4. EF Core Migrations
-
-Sử dụng Migration để tạo và cập nhật cơ sở dữ liệu.
-
-Các lệnh chính:
-
-Add-Migration InitialCreateDatabase
+Ví dụ lệnh:
+Add-Migration InitialCreate
 Update-Database
-
-Add-Migration tạo mã Migration dựa trên các Model.
-
-Update-Database áp dụng Migration vào SQL Server và tạo
-cấu trúc cơ sở dữ liệu.
-
-🌐 5. Web API với EF Core
-
-CategoriesController được chuyển từ dữ liệu In-Memory
-sang truy vấn trực tiếp SQL Server thông qua DbContext.
-
-Các chức năng CRUD:
-
-Method	Endpoint	Chức năng
-GET	/api/categories	Lấy danh sách
-GET	/api/categories/{id}	Lấy theo ID
-POST	/api/categories	Thêm
-PUT	/api/categories/{id}	Cập nhật
-DELETE	/api/categories/{id}	Xóa
-
-Sử dụng các phương thức bất đồng bộ như:
-
-ToListAsync()
-FindAsync()
-SaveChangesAsync()
-
-Đối với các truy vấn chỉ đọc, sử dụng AsNoTracking() để không
-cần theo dõi Entity trong DbContext.
-
-🖥️ 6. WinForms Client
-
-WinForms tiếp tục sử dụng:
-
-HttpClient
-System.Net.Http.Json
-JWT Bearer Token từ Buổi 2
-
-Các thao tác trên FormCategoryManagement được thực hiện
-thông qua Web API.
-
-WinForms
-    ↓
-HttpClient
-    ↓
-ASP.NET Core Web API
-    ↓
-Entity Framework Core
-    ↓
-SQL Server
-
-Logic CRUD phía WinForms tiếp tục sử dụng API, chỉ thay đổi
-nguồn dữ liệu phía Backend từ RAM sang SQL Server.
-
-👥 7. Bài tập mở rộng - Quản lý khách hàng
-
-Xây dựng thêm module Customers.
-
-Customer gồm:
-CustomerId
-CustomerName
-PhoneNumber
-Address
-RewardPoints
-MembershipRank
-
-Các nội dung thực hiện:
-
-Tạo Customer.cs.
-Thêm DbSet<Customer> vào SupermarketDbContext.
-Tạo Migration cập nhật CSDL.
-Xây dựng CustomersController.
-Thực hiện CRUD khách hàng.
-Xây dựng FormCustomerManagement trên WinForms.
-Tìm kiếm khách hàng theo tên hoặc số điện thoại.
-🧪 8. Kiểm thử
-Swagger
-
-Kiểm tra:
-
-GET    /api/categories
-POST   /api/categories
-PUT    /api/categories/{id}
-DELETE /api/categories/{id}
-SQL Server
-
-Sử dụng SQL Server Management Studio (SSMS) để kiểm tra
-dữ liệu trong các bảng.
-
-Ví dụ:
-
-SELECT * FROM dbo.Categories;
-WinForms
-
-Thực hiện:
-
-Thêm dữ liệu
-Cập nhật dữ liệu
-Xóa dữ liệu
-Tải lại dữ liệu
-
-Sau đó tắt Web API và WinForms rồi chạy lại để kiểm tra dữ liệu
-vẫn còn trong SQL Server.
-
-🛠️ Công nghệ sử dụng
-.NET 8
-ASP.NET Core Web API
-WinForms
-Entity Framework Core
-SQL Server
-LINQ
-JWT Authentication
-Swagger
-SSMS
-C#
-Visual Studio
-📁 Cấu trúc chính
-MiniSupermarket
-│
-├── MiniSupermarket.API
-│   ├── Controllers
-│   │   ├── AuthController.cs
-│   │   ├── CategoriesController.cs
-│   │   └── CustomersController.cs
-│   │
-│   ├── Data
-│   │   └── SupermarketDbContext.cs
-│   │
-│   ├── Models
-│   │   ├── Category.cs
-│   │   ├── Product.cs
-│   │   └── Customer.cs
-│   │
-│   ├── Migrations
-│   ├── Program.cs
-│   └── appsettings.json
-│
-└── MiniSupermarket.WinForms
-    ├── FormLogin.cs
-    ├── FormCategoryManagement.cs
-    ├── FormCustomerManagement.cs
-    └── SessionManager.cs
-✅ Kết quả Buổi 3
-
-Hoàn thành:
-
-Kết nối ASP.NET Core Web API với SQL Server.
-Sử dụng EF Core Code-First.
-Tạo và quản lý Database bằng Migrations.
-Chuyển CRUD từ In-Memory sang SQL Server.
-Sử dụng LINQ kết hợp async/await.
-Kiểm tra dữ liệu bằng Swagger và SSMS.
-Xây dựng module quản lý khách hàng.
-Đảm bảo dữ liệu vẫn tồn tại sau khi khởi động lại ứng dụng.
+Nếu dùng CLI:
+dotnet ef migrations add InitialCreate
+dotnet ef database update
+Chỉ chạy migration đầu tiên khi dự án chưa có migration tương ứng; nếu đã có migration, hãy dùng tên mới phù hợp với thay đổi.
+🔄 6. Sử dụng EF Core trong Controller
+Các thao tác cơ bản thường dùng:
+- ToListAsync() để lấy danh sách.
+- FindAsync() để tìm theo khóa chính.
+- Add() và SaveChangesAsync() để thêm mới.
+- Cập nhật entity rồi gọi SaveChangesAsync().
+- Remove() và SaveChangesAsync() để xóa.
+- Where() / FirstOrDefaultAsync() để lọc hoặc tìm dữ liệu.
+- Trả NotFound() khi không có bản ghi tương ứng và BadRequest() khi dữ liệu không hợp lệ.
+Sử dụng async / await cho thao tác I/O để tránh chặn luồng xử lý trong khi chờ SQL Server.
+🧪 7. Chạy và kiểm thử
+1. Kiểm tra DefaultConnection.
+2. Cập nhật database bằng migration.
+3. Chạy MiniSupermarket.API.
+4. Dùng Swagger kiểm tra GET, POST, PUT và DELETE cho API tương ứng.
+5. Chạy WinForms Client và kiểm tra dữ liệu hiển thị khớp với SQL Server.
+6. Kiểm tra trường hợp ID không tồn tại và dữ liệu đầu vào không hợp lệ.
+👨‍💻 9. Thông tin sinh viên
+- Họ tên sinh viên: [Lê Thanh Hoàng]
+- Mã sinh viên: [2124110130]
+- Lớp học phần: [Lập trình ứng dụng]
