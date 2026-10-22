@@ -119,6 +119,14 @@
             dgvCategories.Size = new Size(380, 290);
             dgvCategories.TabIndex = 0;
             dgvCategories.CellClick += dgvCategories_CellClick;
+            dgvCategories.Anchor =
+    AnchorStyles.Top |
+    AnchorStyles.Bottom |
+    AnchorStyles.Left |
+    AnchorStyles.Right;
+
+            dgvCategories.AutoSizeColumnsMode =
+                DataGridViewAutoSizeColumnsMode.Fill;
             // 
             // colId
             // 
@@ -211,8 +219,8 @@
             txtCategoryName.Name = "txtCategoryName";
             txtCategoryName.Size = new Size(300, 23);
             txtCategoryName.TabIndex = 3;
-            txtCategoryName.Click += dfasdf;
-            txtCategoryName.TextChanged += txtCategoryName_TextChanged;
+            
+            
             // 
             // lblCategoryName
             // 
@@ -252,8 +260,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
-            Controls.Add(statusStrip);
+            ClientSize = new Size(1032, 613);
             Controls.Add(grpCategoryInfo);
             Controls.Add(grpCategoryList);
             Controls.Add(grpSearch);

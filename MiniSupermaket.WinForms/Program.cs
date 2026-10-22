@@ -15,7 +15,7 @@ namespace MiniSupermaket.WinForms
             ApplicationConfiguration.Initialize();
             Application.Run(new FormLogin());
 
-            Application.Run(new FormCategoryManagement());
+            //Application.Run(new FormCategoryManagement());
         }
     }
 }
