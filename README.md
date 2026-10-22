@@ -60,7 +60,7 @@ Bước 4. Kiểm thử WinForms
 3. Kiểm tra API được gọi kèm Bearer Token.
 4. Thử đăng nhập sai và kiểm tra thông báo lỗi.
 
-👨‍💻 7. Thông tin sinh viên
+👨‍💻 6. Thông tin sinh viên
 - Họ tên sinh viên: [Lê Thanh Hoàng]
 - Mã sinh viên: [2124110130]
 - Lớp học phần: [Lập trình ứng dụng]
