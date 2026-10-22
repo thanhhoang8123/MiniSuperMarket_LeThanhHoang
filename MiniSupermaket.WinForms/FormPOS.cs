@@ -21,28 +21,7 @@ namespace MiniSupermarket.WinForms
            
         }
 
-        // =====================================================
-        // HTTP CLIENT CÓ TOKEN
-        // =====================================================
-
-        private HttpClient GetAuthenticatedClient()
-        {
-            var client = new HttpClient
-            {
-                BaseAddress = new Uri("https://localhost:7207/api/")
-            };
-
-            if (!string.IsNullOrEmpty(SessionManager.JwtToken))
-            {
-                client.DefaultRequestHeaders.Authorization =
-                    new AuthenticationHeaderValue(
-                        "Bearer",
-                        SessionManager.JwtToken);
-            }
-
-            return client;
-        }
-
+   
         // =====================================================
         // CẤU HÌNH DATAGRIDVIEW GIỎ HÀNG
         // =====================================================
@@ -113,24 +92,36 @@ namespace MiniSupermarket.WinForms
         // QUÉT BARCODE
         // =====================================================
 
+
         private async void txtBarcode_KeyDown(
             object? sender,
             KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Enter &&
-                !string.IsNullOrWhiteSpace(txtBarcode.Text))
+            if (e.KeyCode != Keys.Enter)
+                return;
+
+            e.SuppressKeyPress = true;
+
+            string barcode = txtBarcode.Text.Trim();
+
+            if (string.IsNullOrWhiteSpace(barcode))
             {
-                e.SuppressKeyPress = true;
+                txtBarcode.Focus();
+                return;
+            }
 
-                string barcode = txtBarcode.Text.Trim();
+            txtBarcode.Clear();
 
-                txtBarcode.Clear();
-
+            try
+            {
                 await AddProductToCartByBarcodeAsync(barcode);
-
+            }
+            finally
+            {
                 txtBarcode.Focus();
             }
         }
+
 
         // =====================================================
         // TÌM SẢN PHẨM THEO BARCODE
@@ -141,11 +132,12 @@ namespace MiniSupermarket.WinForms
         {
             try
             {
-                using var client = GetAuthenticatedClient();
+                 var product =
+                    await ApiClientService.GetAsync<ProductDto>(
+                     "ado-products/barcode/" +
+                     Uri.EscapeDataString(barcode));
 
-                var product =
-                    await client.GetFromJsonAsync<ProductDto>(
-                        $"products/barcode/{barcode}");
+
 
                 if (product == null)
                 {
@@ -320,13 +312,11 @@ namespace MiniSupermarket.WinForms
 
             try
             {
-                using var client =
-                    GetAuthenticatedClient();
+               
 
-                var response =
-                    await client.PostAsJsonAsync(
-                        "orders/checkout",
-                        orderRequest);
+                using var response = await ApiClientService.PostAsync(
+                    "orders/checkout",
+                    orderRequest);
 
                 if (response.IsSuccessStatusCode)
                 {
