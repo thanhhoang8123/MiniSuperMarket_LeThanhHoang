@@ -53,14 +53,37 @@ namespace MiniSupermarket.WinForms
                     MessageBox.Show($"Đăng nhập thành công với quyền: {SessionManager.CurrentRole}", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                     // Mở Form quản lý chính và ẩn Form đăng nhập đi
-                    FormMain mainForm = new FormMain();
+                    //FormMain mainForm = new FormMain();\
+                    FormMainShell mainForm = new FormMainShell();
                     this.Hide();
                     mainForm.ShowDialog();
                     this.Close(); // Đóng hẳn ứng dụng khi form chính tắt
                 }
                 else
                 {
-                    MessageBox.Show("Sai tài khoản hoặc mật khẩu!", "Đăng nhập thất bại", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    var jsonString = await response.Content.ReadAsStringAsync();
+
+                    try
+                    {
+                        using var doc = JsonDocument.Parse(jsonString);
+
+                        string message = doc.RootElement.GetProperty("message").GetString()
+                                         ?? "Đăng nhập thất bại!";
+
+                        MessageBox.Show(
+                            message,
+                            "Đăng nhập thất bại",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Warning);
+                    }
+                    catch
+                    {
+                        MessageBox.Show(
+                            "Đăng nhập thất bại!",
+                            "Lỗi",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Error);
+                    }
                 }
             }
             catch (Exception ex)
