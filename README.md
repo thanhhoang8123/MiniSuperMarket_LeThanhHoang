@@ -1,234 +1,66 @@
- MiniSupermarket System
+🛒 HỆ THỐNG QUẢN LÝ SIÊU THỊ MINI (MINISUPERMARKET SYSTEM)
+Môn học: Lập trình Ứng dụng .NET Core (Mã môn: 229162)
+Buổi thực hành: Buổi 2 - Bảo mật & phân quyền JWT cho Web API
 
-📚 Thông tin
-- Môn học: Lập trình Ứng dụng .NET Core
-- Buổi: 3
-- Đề tài: Hệ thống quản lý siêu thị mini
-- Kiến trúc: Client - Server
+🏗️ 1. Mục tiêu buổi thực hành
+- Phân biệt Authentication (xác thực) và Authorization (phân quyền).
+- Tích hợp JWT (JSON Web Token) vào ASP.NET Core Web API.
+- Bảo vệ API bằng [Authorize] và [Authorize(Roles = "...")].
+- Xây dựng giao diện đăng nhập WinForms.
+- Lưu thông tin phiên đăng nhập và gửi Bearer Token khi gọi API.
+🛠️ 2. Công nghệ sử dụng
+- C# / .NET 8.0
+- ASP.NET Core Web API
+- JWT Bearer Authentication
+- System.IdentityModel.Tokens.Jwt
+- Microsoft.AspNetCore.Authentication.JwtBearer
+- Windows Forms
+- HttpClient và System.Net.Http.Json
+- Swagger UI
+🔐 3. Kiến thức chính
+3.1. Authentication và Authorization
+- Authentication: xác minh danh tính tài khoản đăng nhập.
+- Authorization: xác định tài khoản có quyền thực hiện chức năng hay không.
+3.2. Cấu trúc JWT
+JWT gồm ba phần:
+1. Header: thuật toán và loại token.
+2. Payload: các claims như tên tài khoản, vai trò và thời hạn.
+3. Signature: chữ ký dùng để phát hiện token bị chỉnh sửa.
+JWT hỗ trợ xác thực không trạng thái (stateless): Client gửi token kèm request; API xác minh token thay vì lưu một phiên đăng nhập phía Server.
+3.3. Data Annotations và ModelState
+Các thuộc tính như [Required], [StringLength], [Range] và [EmailAddress] giúp kiểm tra dữ liệu đầu vào. Với Controller dùng [ApiController], dữ liệu không hợp lệ thường được phản hồi bằng HTTP 400 Bad Request.
+🧩 4. Kiến trúc và chức năng triển khai
+Backend — MiniSupermarket.API
+- AuthController: tiếp nhận thông tin đăng nhập và cấp JWT.
+- Cấu hình AddAuthentication() và AddJwtBearer() trong Program.cs.
+- Gọi app.UseAuthentication() trước app.UseAuthorization().
+- Bảo vệ các API cần đăng nhập bằng [Authorize].
+- Dùng claim Name và Role để nhận diện tài khoản và vai trò.
+WinForms Client — MiniSupermarket.WinForms
+- FormLogin: nhập tài khoản và mật khẩu.
+- SessionManager: lưu thông tin người dùng và token trong phiên chạy ứng dụng.
+- ApiClientService: sử dụng HttpClient để gọi API và gắn header Authorization: Bearer <token>.
+- Sau khi đăng nhập, mở giao diện chính theo thông tin phiên đăng nhập.
+🚀 5. Hướng dẫn chạy và kiểm thử
+Bước 1. Chạy Web API
+1. Mở Solution bằng Visual Studio 2022.
+2. Chọn MiniSupermarket.API làm Startup Project.
+3. Nhấn F5 và mở Swagger UI.
+Bước 2. Kiểm thử đăng nhập
+1. Gọi POST /api/auth/login với thông tin đăng nhập hợp lệ.
+2. Kiểm tra phản hồi có success, token và role.
+3. Thử tài khoản hoặc mật khẩu không hợp lệ; API phải từ chối đăng nhập.
+Bước 3. Kiểm thử API được bảo vệ
+1. Gọi API có [Authorize] khi chưa có token: mong đợi HTTP 401 Unauthorized.
+2. Gửi token hợp lệ trong Swagger hoặc Client.
+3. Với API giới hạn vai trò, thử token có vai trò không phù hợp: mong đợi HTTP 403 Forbidden.
+Bước 4. Kiểm thử WinForms
+1. Chạy MiniSupermarket.WinForms.
+2. Đăng nhập qua FormLogin.
+3. Kiểm tra API được gọi kèm Bearer Token.
+4. Thử đăng nhập sai và kiểm tra thông báo lỗi.
 
----
-
-🎯 Mục tiêu Buổi 3
-
-Chuyển hệ thống từ cơ chế lưu trữ dữ liệu tạm thời trên RAM sang
-**Microsoft SQL Server** thông qua **Entity Framework Core (EF Core)**.
-
-Các nội dung chính:
-- SQL Server
-- Entity Framework Core
-- Code-First
-- DbContext
-- EF Core Migrations
-- LINQ và async/await
-- CRUD với dữ liệu thực tế
-- Kiểm tra dữ liệu bằng SSMS
-
----
-🗄️ 1. Tích hợp SQL Server
-
-Ở Buổi 1 và Buổi 2, dữ liệu được lưu tạm trong bộ nhớ RAM nên
-sẽ mất khi Web API khởi động lại.
-
-Buổi 3 chuyển sang lưu trữ lâu dài bằng SQL Server:
-
-```text
-MiniSupermarketDb
-├── Categories
-└── Products
-
-Dữ liệu được lưu trực tiếp trong cơ sở dữ liệu và vẫn tồn tại
-sau khi tắt hoặc khởi động lại ứng dụng.
-
-🔧 2. Entity Framework Core
-
-Sử dụng EF Core theo phương pháp Code-First.
-
-Các package chính:
-
-Microsoft.EntityFrameworkCore.SqlServer
-Microsoft.EntityFrameworkCore.Tools
-Microsoft.EntityFrameworkCore.Design
-
-EF Core đóng vai trò kết nối giữa các Model C# và SQL Server.
-
-📦 3. DbContext
-
-Xây dựng:
-
-SupermarketDbContext
-
-DbContext quản lý các Entity và kết nối đến SQL Server.
-
-Các DbSet chính:
-
-DbSet<Category>
-DbSet<Product>
-
-Connection String được cấu hình trong:
-
-appsettings.json
-
-Sau đó đăng ký SupermarketDbContext vào Program.cs
-thông qua Dependency Injection.
-
-🔄 4. EF Core Migrations
-
-Sử dụng Migration để tạo và cập nhật cơ sở dữ liệu.
-
-Các lệnh chính:
-
-Add-Migration InitialCreateDatabase
-Update-Database
-
-Add-Migration tạo mã Migration dựa trên các Model.
-
-Update-Database áp dụng Migration vào SQL Server và tạo
-cấu trúc cơ sở dữ liệu.
-
-🌐 5. Web API với EF Core
-
-CategoriesController được chuyển từ dữ liệu In-Memory
-sang truy vấn trực tiếp SQL Server thông qua DbContext.
-
-Các chức năng CRUD:
-
-Method	Endpoint	Chức năng
-GET	/api/categories	Lấy danh sách
-GET	/api/categories/{id}	Lấy theo ID
-POST	/api/categories	Thêm
-PUT	/api/categories/{id}	Cập nhật
-DELETE	/api/categories/{id}	Xóa
-
-Sử dụng các phương thức bất đồng bộ như:
-
-ToListAsync()
-FindAsync()
-SaveChangesAsync()
-
-Đối với các truy vấn chỉ đọc, sử dụng AsNoTracking() để không
-cần theo dõi Entity trong DbContext.
-
-🖥️ 6. WinForms Client
-
-WinForms tiếp tục sử dụng:
-
-HttpClient
-System.Net.Http.Json
-JWT Bearer Token từ Buổi 2
-
-Các thao tác trên FormCategoryManagement được thực hiện
-thông qua Web API.
-
-WinForms
-    ↓
-HttpClient
-    ↓
-ASP.NET Core Web API
-    ↓
-Entity Framework Core
-    ↓
-SQL Server
-
-Logic CRUD phía WinForms tiếp tục sử dụng API, chỉ thay đổi
-nguồn dữ liệu phía Backend từ RAM sang SQL Server.
-
-👥 7. Bài tập mở rộng - Quản lý khách hàng
-
-Xây dựng thêm module Customers.
-
-Customer gồm:
-CustomerId
-CustomerName
-PhoneNumber
-Address
-RewardPoints
-MembershipRank
-
-Các nội dung thực hiện:
-
-Tạo Customer.cs.
-Thêm DbSet<Customer> vào SupermarketDbContext.
-Tạo Migration cập nhật CSDL.
-Xây dựng CustomersController.
-Thực hiện CRUD khách hàng.
-Xây dựng FormCustomerManagement trên WinForms.
-Tìm kiếm khách hàng theo tên hoặc số điện thoại.
-🧪 8. Kiểm thử
-Swagger
-
-Kiểm tra:
-
-GET    /api/categories
-POST   /api/categories
-PUT    /api/categories/{id}
-DELETE /api/categories/{id}
-SQL Server
-
-Sử dụng SQL Server Management Studio (SSMS) để kiểm tra
-dữ liệu trong các bảng.
-
-Ví dụ:
-
-SELECT * FROM dbo.Categories;
-WinForms
-
-Thực hiện:
-
-Thêm dữ liệu
-Cập nhật dữ liệu
-Xóa dữ liệu
-Tải lại dữ liệu
-
-Sau đó tắt Web API và WinForms rồi chạy lại để kiểm tra dữ liệu
-vẫn còn trong SQL Server.
-
-🛠️ Công nghệ sử dụng
-.NET 8
-ASP.NET Core Web API
-WinForms
-Entity Framework Core
-SQL Server
-LINQ
-JWT Authentication
-Swagger
-SSMS
-C#
-Visual Studio
-📁 Cấu trúc chính
-MiniSupermarket
-│
-├── MiniSupermarket.API
-│   ├── Controllers
-│   │   ├── AuthController.cs
-│   │   ├── CategoriesController.cs
-│   │   └── CustomersController.cs
-│   │
-│   ├── Data
-│   │   └── SupermarketDbContext.cs
-│   │
-│   ├── Models
-│   │   ├── Category.cs
-│   │   ├── Product.cs
-│   │   └── Customer.cs
-│   │
-│   ├── Migrations
-│   ├── Program.cs
-│   └── appsettings.json
-│
-└── MiniSupermarket.WinForms
-    ├── FormLogin.cs
-    ├── FormCategoryManagement.cs
-    ├── FormCustomerManagement.cs
-    └── SessionManager.cs
-✅ Kết quả Buổi 3
-
-Hoàn thành:
-
-Kết nối ASP.NET Core Web API với SQL Server.
-Sử dụng EF Core Code-First.
-Tạo và quản lý Database bằng Migrations.
-Chuyển CRUD từ In-Memory sang SQL Server.
-Sử dụng LINQ kết hợp async/await.
-Kiểm tra dữ liệu bằng Swagger và SSMS.
-Xây dựng module quản lý khách hàng.
-Đảm bảo dữ liệu vẫn tồn tại sau khi khởi động lại ứng dụng.
+👨‍💻 6. Thông tin sinh viên
+- Họ tên sinh viên: [Lê Thanh Hoàng]
+- Mã sinh viên: [2124110130]
+- Lớp học phần: [Lập trình ứng dụng]
