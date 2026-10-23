@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using MiniSupermarket.WinForms.DTOs;
 
 namespace MiniSupermarket.WinForms
 {
@@ -666,13 +667,5 @@ namespace MiniSupermarket.WinForms
     // DTO NHẬN DỮ LIỆU TỪ WEB API
     // =============================================================
 
-    public class CategoryDto
-    {
-        public int CategoryId { get; set; }
-
-        public string CategoryName { get; set; }
-            = string.Empty;
-
-        public string? Description { get; set; }
-    }
+   
 }

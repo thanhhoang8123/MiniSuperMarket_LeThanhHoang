@@ -4,6 +4,7 @@ using System.Net.Http.Json;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Net.Http.Headers;
+using MiniSupermarket.WinForms.Services;
 
 namespace MiniSupermarket.WinForms
 {

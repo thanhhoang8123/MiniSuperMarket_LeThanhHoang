@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Windows.Forms;
+using MiniSupermarket.WinForms.Services;
 
 namespace MiniSupermarket.WinForms
 {
