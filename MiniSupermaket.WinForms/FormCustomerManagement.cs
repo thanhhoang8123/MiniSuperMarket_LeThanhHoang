@@ -5,6 +5,11 @@ namespace MiniSupermarket.WinForms
 {
     public partial class FormCustomerManagement : Form
     {
+        private int _currentPage = 1;
+        private const int _pageSize = 5;
+        private int _totalPages = 0;
+        private string _keyword = string.Empty;
+
         private HttpClient GetAuthenticatedClient()
         {
             var client = new HttpClient
@@ -35,6 +40,8 @@ namespace MiniSupermarket.WinForms
             btnUpdate.Click += btnUpdate_Click;
             btnDelete.Click += btnDelete_Click;
             btnSearch.Click += btnSearch_Click;
+            btnPrevious.Click += btnPrevious_Click;
+            btnNext.Click += btnNext_Click;
         }
 
         // Tự động tải danh sách khi mở Form
@@ -42,30 +49,74 @@ namespace MiniSupermarket.WinForms
             object? sender,
             EventArgs e)
         {
+            _currentPage = 1;
             await LoadCustomersAsync();
         }
 
-        // GET /api/customers
+        // GET /api/customers/paged
         private async Task LoadCustomersAsync()
         {
             try
             {
                 using var client = GetAuthenticatedClient();
 
-                var customers =
-                    await client.GetFromJsonAsync<List<CustomerDto>>(
-                        "customers");
+                string url =
+                    $"customers/paged?pageNumber={_currentPage}" +
+                    $"&pageSize={_pageSize}" +
+                    $"&keyword={Uri.EscapeDataString(_keyword)}";
 
-                dgvCustomers.DataSource = customers;
+                var result =
+                    await client.GetFromJsonAsync<PagedCustomerResponse>(url);
+
+                if (result == null)
+                {
+                    dgvCustomers.DataSource = null;
+                    _totalPages = 0;
+                    UpdatePaginationControls();
+                    return;
+                }
+
+                _currentPage = result.CurrentPage;
+                _totalPages = result.TotalPages;
+                dgvCustomers.DataSource = result.Items;
+                UpdatePaginationControls();
             }
             catch (Exception ex)
             {
                 MessageBox.Show(
-                    "Lỗi kết nối Server: " + ex.Message,
+                    "Lỗi tải danh sách khách hàng: " + ex.Message,
                     "Lỗi",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
             }
+        }
+
+        private void UpdatePaginationControls()
+        {
+            lblPageInfo.Text = _totalPages == 0
+                ? "Trang 0 / 0"
+                : $"Trang {_currentPage} / {_totalPages}";
+
+            btnPrevious.Enabled = _currentPage > 1;
+            btnNext.Enabled = _currentPage < _totalPages;
+        }
+
+        private async void btnPrevious_Click(object? sender, EventArgs e)
+        {
+            if (_currentPage <= 1)
+                return;
+
+            _currentPage--;
+            await LoadCustomersAsync();
+        }
+
+        private async void btnNext_Click(object? sender, EventArgs e)
+        {
+            if (_currentPage >= _totalPages)
+                return;
+
+            _currentPage++;
+            await LoadCustomersAsync();
         }
 
         // Nút Tải danh sách
@@ -73,6 +124,7 @@ namespace MiniSupermarket.WinForms
             object? sender,
             EventArgs e)
         {
+            _currentPage = 1;
             await LoadCustomersAsync();
         }
 
@@ -352,37 +404,14 @@ namespace MiniSupermarket.WinForms
             }
         }
 
-        // GET /api/customers/search?keyword=...
+        // Tìm kiếm kết hợp phân trang qua API /customers/paged
         private async void btnSearch_Click(
             object? sender,
             EventArgs e)
         {
-            string keyword = txtKeyword.Text.Trim();
-
-            if (string.IsNullOrEmpty(keyword))
-            {
-                await LoadCustomersAsync();
-                return;
-            }
-
-            try
-            {
-                using var client = GetAuthenticatedClient();
-
-                var result =
-                    await client.GetFromJsonAsync<List<CustomerDto>>(
-                        $"customers/search?keyword={Uri.EscapeDataString(keyword)}");
-
-                dgvCustomers.DataSource = result;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(
-                    "Lỗi tìm kiếm: " + ex.Message,
-                    "Lỗi",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
-            }
+            _keyword = txtKeyword.Text.Trim();
+            _currentPage = 1;
+            await LoadCustomersAsync();
         }
 
         // Xóa dữ liệu trên các TextBox
@@ -406,6 +435,16 @@ namespace MiniSupermarket.WinForms
         {
             // No action required when labels are clicked.
         }
+    }
+
+    // DTO nhận kết quả phân trang từ API
+    public class PagedCustomerResponse
+    {
+        public int CurrentPage { get; set; }
+        public int PageSize { get; set; }
+        public int TotalItems { get; set; }
+        public int TotalPages { get; set; }
+        public List<CustomerDto> Items { get; set; } = new();
     }
 
     // DTO nhận dữ liệu JSON từ API

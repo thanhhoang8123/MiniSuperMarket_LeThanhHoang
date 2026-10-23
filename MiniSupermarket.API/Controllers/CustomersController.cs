@@ -48,7 +48,6 @@ namespace MiniSupermarket.API.Controllers
             if (string.IsNullOrWhiteSpace(keyword))
                 return BadRequest(new { message = "Vui lòng nhập từ khóa!" });
 
-            // Tìm theo tên hoặc số điện thoại
             var result = await _context.Customers
                 .Where(c =>
                     c.CustomerName.Contains(keyword) ||
@@ -57,6 +56,62 @@ namespace MiniSupermarket.API.Controllers
                 .ToListAsync();
 
             return Ok(result);
+        }
+
+        // GET: api/customers/paged?pageNumber=1&pageSize=5&keyword=nguyen
+        [HttpGet("paged")]
+        public async Task<IActionResult> GetPagedCustomers(
+            [FromQuery] int pageNumber = 1,
+            [FromQuery] int pageSize = 5,
+            [FromQuery] string? keyword = null)
+        {
+            if (pageNumber < 1)
+                pageNumber = 1;
+
+            if (pageSize < 1 || pageSize > 50)
+                pageSize = 5;
+
+            // Tạo truy vấn và lọc theo tên hoặc số điện thoại nếu có từ khóa.
+            var query = _context.Customers
+                .AsNoTracking()
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(keyword))
+            {
+                string search = keyword.Trim();
+
+                query = query.Where(c =>
+                    c.CustomerName.Contains(search) ||
+                    c.PhoneNumber.Contains(search));
+            }
+
+            // Đếm tổng số khách hàng sau khi lọc.
+            int totalItems = await query.CountAsync();
+
+            // Sắp xếp điểm tích lũy giảm dần, rồi đến mã khách hàng tăng dần.
+            var orderedQuery = query
+                .OrderByDescending(c => c.RewardPoints)
+                .ThenBy(c => c.CustomerId);
+
+            int totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+
+            // Nếu trang yêu cầu vượt quá tổng số trang, đưa về trang cuối.
+            if (totalPages > 0 && pageNumber > totalPages)
+                pageNumber = totalPages;
+
+            var customers = await orderedQuery
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return Ok(new
+            {
+                CurrentPage = pageNumber,
+                PageSize = pageSize,
+                TotalItems = totalItems,
+                TotalPages = totalPages,
+                Items = customers
+            });
         }
 
         // POST: api/customers

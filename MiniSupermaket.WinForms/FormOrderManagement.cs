@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using MiniSupermarket.WinForms.DTOs;
+using MiniSupermarket.WinForms.Services;
 
 
 namespace MiniSupermarket.WinForms

@@ -51,6 +51,9 @@
             txtKeyword = new TextBox();
             btnSearch = new Button();
             dgvCustomers = new DataGridView();
+            btnPrevious = new Button();
+            lblPageInfo = new Label();
+            btnNext = new Button();
             grpCustomerInfo.SuspendLayout();
             pnlActions.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvCustomers).BeginInit();
@@ -65,7 +68,7 @@
             lblTitle.Size = new Size(366, 41);
             lblTitle.TabIndex = 1;
             lblTitle.Text = " QUẢN LÝ KHÁCH HÀNG";
-            
+
             // 
             // grpCustomerInfo
             // 
@@ -129,7 +132,7 @@
             lblPhoneNumber.Size = new Size(100, 20);
             lblPhoneNumber.TabIndex = 4;
             lblPhoneNumber.Text = "Số điện thoại:";
-           
+
             // 
             // txtPhoneNumber
             // 
@@ -178,7 +181,7 @@
             lblMembershipRank.Size = new Size(120, 20);
             lblMembershipRank.TabIndex = 3;
             lblMembershipRank.Text = "Hạng thành viên:";
-            
+
             // 
             // txtMembershipRank
             // 
@@ -278,12 +281,47 @@
                 AnchorStyles.Bottom |
                 AnchorStyles.Left |
                 AnchorStyles.Right;
+            //
+            // btnPrevious
+            //
+            btnPrevious.Location = new Point(12, 590);
+            btnPrevious.Name = "btnPrevious";
+            btnPrevious.Size = new Size(130, 35);
+            btnPrevious.TabIndex = 12;
+            btnPrevious.Text = "◀ Trang trước";
+            btnPrevious.UseVisualStyleBackColor = true;
+            btnPrevious.Enabled = false;
+
+            //
+            // lblPageInfo
+            //
+            lblPageInfo.Location = new Point(400, 593);
+            lblPageInfo.Name = "lblPageInfo";
+            lblPageInfo.Size = new Size(170, 28);
+            lblPageInfo.TabIndex = 13;
+            lblPageInfo.Text = "Trang 0 / 0";
+            lblPageInfo.TextAlign = ContentAlignment.MiddleCenter;
+
+            //
+            // btnNext
+            //
+            btnNext.Location = new Point(832, 590);
+            btnNext.Name = "btnNext";
+            btnNext.Size = new Size(130, 35);
+            btnNext.TabIndex = 14;
+            btnNext.Text = "Trang sau ▶";
+            btnNext.UseVisualStyleBackColor = true;
+            btnNext.Enabled = false;
+
             // 
             // FormCustomerManagement
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(982, 603);
+            ClientSize = new Size(982, 635);
+            Controls.Add(btnPrevious);
+            Controls.Add(lblPageInfo);
+            Controls.Add(btnNext);
             Controls.Add(dgvCustomers);
             Controls.Add(btnSearch);
             Controls.Add(txtKeyword);
@@ -294,7 +332,7 @@
             FormBorderStyle = FormBorderStyle.None;
             Name = "FormCustomerManagement";
             Text = "QUẢN LÝ KHÁCH HÀNG";
-            
+
             grpCustomerInfo.ResumeLayout(false);
             grpCustomerInfo.PerformLayout();
             pnlActions.ResumeLayout(false);
@@ -327,5 +365,8 @@
         private TextBox txtKeyword;
         private Button btnSearch;
         private DataGridView dgvCustomers;
+        private Button btnPrevious;
+        private Label lblPageInfo;
+        private Button btnNext;
     }
 }
