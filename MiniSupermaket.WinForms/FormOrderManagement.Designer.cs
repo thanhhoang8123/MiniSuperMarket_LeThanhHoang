@@ -41,7 +41,9 @@ namespace MiniSupermarket.WinForms
             lblTitle.Location = new System.Drawing.Point(20, 18);
             lblTitle.Name = "lblTitle";
             lblTitle.Size = new System.Drawing.Size(250, 30);
-            lblTitle.Text = "QUẢN LÝ ĐƠN HÀNG";
+            lblTitle.Text = "DANH SÁCH ĐƠN HÀNG TOÀN HỆ THỐNG";
+            lblTitle.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
+            lblTitle.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
 
             // btnRefresh
             btnRefresh.Anchor =
@@ -93,7 +95,9 @@ namespace MiniSupermarket.WinForms
             lblDetailsTitle.Location = new System.Drawing.Point(20, 414);
             lblDetailsTitle.Name = "lblDetailsTitle";
             lblDetailsTitle.Size = new System.Drawing.Size(180, 25);
-            lblDetailsTitle.Text = "CHI TIẾT ĐƠN HÀNG";
+            lblDetailsTitle.Text = "CHI TIẾT MẶT HÀNG TRONG HÓA ĐƠN";
+            lblDetailsTitle.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
+            lblDetailsTitle.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
 
             // dgvDetails
             dgvDetails.Anchor =

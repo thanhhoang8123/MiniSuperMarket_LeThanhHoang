@@ -1,4 +1,4 @@
-﻿namespace MiniSupermarket.WinForms
+namespace MiniSupermarket.WinForms
 {
     partial class FormProductManagement
     {
@@ -36,6 +36,7 @@
         private Button btnClear;
         private Button btnPrevious;
         private Button btnNext;
+        private Button btnExportExcel;
 
         private Label lblPageInfo;
         private Label lblBarcode;
@@ -63,7 +64,14 @@
 
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle
+            {
+                BackColor = Color.FromArgb(30, 41, 59),
+                ForeColor = Color.White,
+                Font = new Font("Segoe UI", 9.5F, FontStyle.Bold),
+                SelectionBackColor = Color.FromArgb(0, 120, 215),
+                SelectionForeColor = Color.White
+            };
             panelSearch = new Panel();
             lblSearchTitle = new Label();
             txtKeyword = new TextBox();
@@ -75,6 +83,7 @@
             btnPrevious = new Button();
             lblPageInfo = new Label();
             btnNext = new Button();
+            btnExportExcel = new Button();
             panelDetail = new Panel();
             lblDetailTitle = new Label();
             lblId = new Label();
@@ -109,6 +118,7 @@
             panelSearch.Controls.Add(txtKeyword);
             panelSearch.Controls.Add(btnSearch);
             panelSearch.Controls.Add(cboFilterCategory);
+            panelSearch.Controls.Add(btnExportExcel);
             panelSearch.Location = new Point(17, 20);
             panelSearch.Margin = new Padding(3, 4, 3, 4);
             panelSearch.Name = "panelSearch";
@@ -215,6 +225,22 @@
             dgvProducts.CellClick += dgvProducts_CellClick;
             
             // 
+            // btnExportExcel
+            // 
+            btnExportExcel.BackColor = Color.FromArgb(39, 174, 96);
+            btnExportExcel.Cursor = Cursors.Hand;
+            btnExportExcel.FlatAppearance.BorderSize = 0;
+            btnExportExcel.FlatStyle = FlatStyle.Flat;
+            btnExportExcel.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            btnExportExcel.ForeColor = Color.White;
+            btnExportExcel.Location = new Point(621, 10);
+            btnExportExcel.Name = "btnExportExcel";
+            btnExportExcel.Size = new Size(160, 36);
+            btnExportExcel.TabIndex = 5;
+            btnExportExcel.Text = "📥 Xuất Excel / CSV";
+            btnExportExcel.UseVisualStyleBackColor = false;
+            btnExportExcel.Click += btnExportExcel_Click;
+            // 
             // btnPrevious
             // 
             btnPrevious.Cursor = Cursors.Hand;
@@ -223,6 +249,9 @@
             btnPrevious.Location = new Point(17, 620);
             btnPrevious.Margin = new Padding(3, 4, 3, 4);
             btnPrevious.Name = "btnPrevious";
+            btnPrevious.FlatStyle = FlatStyle.Flat;
+            btnPrevious.BackColor = Color.White;
+            btnPrevious.FlatAppearance.BorderColor = Color.FromArgb(203, 213, 225);
             btnPrevious.Size = new Size(143, 43);
             btnPrevious.TabIndex = 2;
             btnPrevious.Text = "◀ Trang trước";
@@ -246,6 +275,9 @@
             btnNext.Location = new Point(621, 620);
             btnNext.Margin = new Padding(3, 4, 3, 4);
             btnNext.Name = "btnNext";
+            btnNext.FlatStyle = FlatStyle.Flat;
+            btnNext.BackColor = Color.White;
+            btnNext.FlatAppearance.BorderColor = Color.FromArgb(203, 213, 225);
             btnNext.Size = new Size(160, 43);
             btnNext.TabIndex = 4;
             btnNext.Text = "Trang sau ▶";
@@ -405,7 +437,7 @@
             // 
             // btnAdd
             // 
-            btnAdd.BackColor = Color.FromArgb(40, 167, 69);
+            btnAdd.BackColor = Color.FromArgb(5, 150, 105);
             btnAdd.Cursor = Cursors.Hand;
             btnAdd.FlatAppearance.BorderSize = 0;
             btnAdd.FlatStyle = FlatStyle.Flat;
@@ -422,7 +454,8 @@
             // 
             // btnUpdate
             // 
-            btnUpdate.BackColor = Color.FromArgb(255, 193, 7);
+            btnUpdate.BackColor = Color.FromArgb(217, 119, 6);
+            btnUpdate.ForeColor = Color.White;
             btnUpdate.Cursor = Cursors.Hand;
             btnUpdate.FlatAppearance.BorderSize = 0;
             btnUpdate.FlatStyle = FlatStyle.Flat;
@@ -439,7 +472,7 @@
             // 
             // btnDelete
             // 
-            btnDelete.BackColor = Color.FromArgb(220, 53, 69);
+            btnDelete.BackColor = Color.FromArgb(220, 38, 38);
             btnDelete.Cursor = Cursors.Hand;
             btnDelete.FlatAppearance.BorderSize = 0;
             btnDelete.FlatStyle = FlatStyle.Flat;
@@ -456,7 +489,7 @@
             // 
             // btnClear
             // 
-            btnClear.BackColor = Color.FromArgb(108, 117, 125);
+            btnClear.BackColor = Color.FromArgb(71, 85, 105);
             btnClear.Cursor = Cursors.Hand;
             btnClear.FlatAppearance.BorderSize = 0;
             btnClear.FlatStyle = FlatStyle.Flat;

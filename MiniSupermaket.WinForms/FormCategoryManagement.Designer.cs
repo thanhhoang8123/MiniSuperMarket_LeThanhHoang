@@ -1,4 +1,4 @@
-﻿namespace MiniSupermarket.WinForms
+namespace MiniSupermarket.WinForms
 {
     partial class FormCategoryManagement
     {
@@ -38,7 +38,8 @@
             colCategoryName = new DataGridViewTextBoxColumn();
             colDescription = new DataGridViewTextBoxColumn();
             grpCategoryInfo = new GroupBox();
-            btnDelete = new Button();
+            btnDelete = new Button();
+            btnClear = new Button();
             btnUpdate = new Button();
             btnAdd = new Button();
             txtDescription = new TextBox();
@@ -64,7 +65,10 @@
             grpSearch.Size = new Size(760, 60);
             grpSearch.TabIndex = 0;
             grpSearch.TabStop = false;
-            grpSearch.Text = "Tìm kiếm";
+            grpSearch.Text = "TÌM KIẾM NHÓM HÀNG";
+            grpSearch.BackColor = Color.White;
+            grpSearch.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold);
+            grpSearch.ForeColor = Color.FromArgb(15, 23, 42);
             // 
             // btnLoad
             // 
@@ -92,7 +96,8 @@
             txtKeyword.Name = "txtKeyword";
             txtKeyword.Size = new Size(240, 23);
             txtKeyword.TabIndex = 0;
-            txtKeyword.Text = "Nhập từ khóa...";
+            txtKeyword.Font = new Font("Segoe UI", 10F);
+            txtKeyword.PlaceholderText = "Nhập mã nhóm hoặc tên nhóm hàng...";
             // 
             // grpCategoryList
             // 
@@ -102,7 +107,10 @@
             grpCategoryList.Size = new Size(400, 320);
             grpCategoryList.TabIndex = 1;
             grpCategoryList.TabStop = false;
-            grpCategoryList.Text = " Danh sách Nhóm hàng";
+            grpCategoryList.Text = "DANH SÁCH NHÓM HÀNG";
+            grpCategoryList.BackColor = Color.White;
+            grpCategoryList.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold);
+            grpCategoryList.ForeColor = Color.FromArgb(15, 23, 42);
             // 
             // dgvCategories
             // 
@@ -116,6 +124,19 @@
             dgvCategories.Name = "dgvCategories";
             dgvCategories.ReadOnly = true;
             dgvCategories.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvCategories.BackgroundColor = Color.White;
+            dgvCategories.BorderStyle = BorderStyle.None;
+            dgvCategories.GridColor = Color.FromArgb(226, 232, 240);
+            dgvCategories.RowTemplate.Height = 35;
+            dgvCategories.Font = new Font("Segoe UI", 9.5F, FontStyle.Regular);
+            dgvCategories.EnableHeadersVisualStyles = false;
+            dgvCategories.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(30, 41, 59);
+            dgvCategories.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+            dgvCategories.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold);
+            dgvCategories.ColumnHeadersHeight = 38;
+            dgvCategories.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(248, 250, 252);
+            dgvCategories.DefaultCellStyle.SelectionBackColor = Color.FromArgb(219, 234, 254);
+            dgvCategories.DefaultCellStyle.SelectionForeColor = Color.FromArgb(30, 58, 138);
             dgvCategories.Size = new Size(380, 290);
             dgvCategories.TabIndex = 0;
             dgvCategories.CellClick += dgvCategories_CellClick;
@@ -126,31 +147,37 @@
     AnchorStyles.Right;
 
             dgvCategories.AutoSizeColumnsMode =
-                DataGridViewAutoSizeColumnsMode.Fill;
+                DataGridViewAutoSizeColumnsMode.None;
             // 
             // colId
             // 
+            colId.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
             colId.DataPropertyName = "CategoryId";
             colId.HeaderText = "Mã ID";
             colId.Name = "colId";
             colId.ReadOnly = true;
+            colId.Width = 75;
+            colId.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             // 
             // colCategoryName
-             colCategoryName.DataPropertyName = "CategoryName";
+            // 
+            colCategoryName.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            colCategoryName.DataPropertyName = "CategoryName";
             colCategoryName.HeaderText = "Tên Nhóm hàng";
             colCategoryName.Name = "colCategoryName";
             colCategoryName.ReadOnly = true;
+            colCategoryName.Width = 220;
             // 
             // colDescription
             // 
-            colDescription.DataPropertyName = "description";
+            colDescription.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            colDescription.DataPropertyName = "Description";
             colDescription.HeaderText = "Mô Tả";
             colDescription.Name = "colDescription";
             colDescription.ReadOnly = true;
             // 
-            // grpCategoryInfo
-            // 
-            grpCategoryInfo.Controls.Add(btnDelete);
+            grpCategoryInfo.Controls.Add(btnDelete);
+            grpCategoryInfo.Controls.Add(btnClear);
             grpCategoryInfo.Controls.Add(btnUpdate);
             grpCategoryInfo.Controls.Add(btnAdd);
             grpCategoryInfo.Controls.Add(txtDescription);
@@ -164,7 +191,10 @@
             grpCategoryInfo.Size = new Size(350, 320);
             grpCategoryInfo.TabIndex = 2;
             grpCategoryInfo.TabStop = false;
-            grpCategoryInfo.Text = "Thông tin Nhóm hàng";
+            grpCategoryInfo.Text = "THÔNG TIN NHÓM HÀNG";
+            grpCategoryInfo.BackColor = Color.White;
+            grpCategoryInfo.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold);
+            grpCategoryInfo.ForeColor = Color.FromArgb(15, 23, 42);
             // 
             // btnDelete
             // 
@@ -176,6 +206,13 @@
             btnDelete.UseVisualStyleBackColor = true;
             btnDelete.Click += btnDelete_Click;
             // 
+            // btnClear
+            btnClear.Location = new Point(15, 310);
+            btnClear.Name = "btnClear";
+            btnClear.Size = new Size(301, 35);
+            btnClear.TabIndex = 9;
+            btnClear.Text = "Làm mới";
+            btnClear.UseVisualStyleBackColor = true;
             // btnUpdate
             // 
             btnUpdate.Location = new Point(97, 243);
@@ -260,6 +297,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
+            BackColor = Color.FromArgb(241, 245, 249);
             ClientSize = new Size(1032, 613);
             Controls.Add(grpCategoryInfo);
             Controls.Add(grpCategoryList);
@@ -294,7 +332,8 @@
         private TextBox txtId;
         private Label lblId;
         private TextBox txtCategoryName;
-        private Button btnDelete;
+        private Button btnDelete;
+        private Button btnClear;
         private Button btnUpdate;
         private Button btnAdd;
         private TextBox txtDescription;
@@ -302,3 +341,4 @@
         private ToolStrip statusStrip;
     }
 }
+

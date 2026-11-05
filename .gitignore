@@ -3,6 +3,12 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+# Generated output and installed JavaScript dependencies at any directory depth.
+**/bin/
+**/obj/
+**/node_modules/
+*.slnLaunch.user
+
 # User-specific files
 *.rsuser
 *.suo

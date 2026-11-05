@@ -1,24 +1,211 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Net.Http.Headers;
+using MiniSupermarket.WinForms.DTOs;
 using MiniSupermarket.WinForms.Services;
 
 namespace MiniSupermarket.WinForms
 {
     public partial class FormUserManagement : Form
     {
+        private const int PageSize = 5;
+        private int _currentPage = 1;
+        private int _totalPages;
+        private int _totalUsers;
+        private readonly Button _btnPreviousPage = new() { Text = "◀ Trang trước" };
+        private readonly Button _btnNextPage = new() { Text = "Trang sau ▶" };
+        private readonly Label _lblPageInfo = new() { TextAlign = ContentAlignment.MiddleCenter };
+
         public FormUserManagement()
         {
             InitializeComponent();
 
+            _btnPreviousPage.FlatStyle = FlatStyle.Flat;
+            _btnPreviousPage.BackColor = System.Drawing.Color.FromArgb(71, 85, 105);
+            _btnPreviousPage.ForeColor = System.Drawing.Color.White;
+            _btnPreviousPage.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            _btnPreviousPage.Cursor = Cursors.Hand;
+            _btnNextPage.FlatStyle = FlatStyle.Flat;
+            _btnNextPage.BackColor = System.Drawing.Color.FromArgb(71, 85, 105);
+            _btnNextPage.ForeColor = System.Drawing.Color.White;
+            _btnNextPage.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            _btnNextPage.Cursor = Cursors.Hand;
+            _lblPageInfo.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            _lblPageInfo.ForeColor = System.Drawing.Color.FromArgb(51, 65, 85);
+            panelGrid.Controls.Add(_btnPreviousPage);
+            panelGrid.Controls.Add(_lblPageInfo);
+            panelGrid.Controls.Add(_btnNextPage);
+            _btnPreviousPage.Click += async (s, e) =>
+            {
+                if (_currentPage > 1) { ClearInputs(); _currentPage--; await LoadUsersAsync(); }
+            };
+            _btnNextPage.Click += async (s, e) =>
+            {
+                if (_currentPage < _totalPages) { ClearInputs(); _currentPage++; await LoadUsersAsync(); }
+            };
+
             Load += FormUserManagement_Load;
+            ConfigureUsersGrid();
             dgvUsers.CellClick += dgvUsers_CellClick;
             btnAddUser.Click += btnAddUser_Click;
             btnResetPassword.Click += btnResetPassword_Click;
             btnToggleLock.Click += btnToggleLock_Click;
+            btnClear.Click += btnClear_Click;
+
+            Resize += (s, e) => ResizeUserLayout();
+            Load += (s, e) => ResizeUserLayout();
+        }
+
+        private void ConfigureUsersGrid()
+        {
+            dgvUsers.AutoGenerateColumns = false;
+            dgvUsers.RowHeadersVisible = false;
+            dgvUsers.Columns.Clear();
+
+            dgvUsers.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = "UserId",
+                DataPropertyName = "UserId",
+                HeaderText = "Mã ID",
+                Width = 70,
+                DefaultCellStyle = new DataGridViewCellStyle { Alignment = DataGridViewContentAlignment.MiddleCenter }
+            });
+
+            dgvUsers.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = "Username",
+                DataPropertyName = "Username",
+                HeaderText = "Tên đăng nhập",
+                Width = 140,
+                DefaultCellStyle = new DataGridViewCellStyle { Font = new System.Drawing.Font("Segoe UI", 9.5F, System.Drawing.FontStyle.Bold) }
+            });
+
+            dgvUsers.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = "FullName",
+                DataPropertyName = "FullName",
+                HeaderText = "Họ và tên",
+                AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
+            });
+
+            dgvUsers.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = "Role",
+                DataPropertyName = "Role",
+                HeaderText = "Vai trò",
+                Width = 110,
+                DefaultCellStyle = new DataGridViewCellStyle { Alignment = DataGridViewContentAlignment.MiddleCenter }
+            });
+
+            dgvUsers.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = "IsActive",
+                DataPropertyName = "IsActive",
+                HeaderText = "Trạng thái",
+                Width = 130,
+                DefaultCellStyle = new DataGridViewCellStyle { Alignment = DataGridViewContentAlignment.MiddleCenter }
+            });
+
+            dgvUsers.EnableHeadersVisualStyles = false;
+            dgvUsers.ColumnHeadersHeight = 38;
+            dgvUsers.ColumnHeadersDefaultCellStyle.BackColor = System.Drawing.Color.FromArgb(30, 41, 59);
+            dgvUsers.ColumnHeadersDefaultCellStyle.ForeColor = System.Drawing.Color.White;
+            dgvUsers.ColumnHeadersDefaultCellStyle.Font = new System.Drawing.Font("Segoe UI", 9.5F, System.Drawing.FontStyle.Bold);
+            dgvUsers.ColumnHeadersDefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(0, 120, 215);
+            dgvUsers.ColumnHeadersDefaultCellStyle.SelectionForeColor = System.Drawing.Color.White;
+            dgvUsers.RowTemplate.Height = 35;
+            dgvUsers.AlternatingRowsDefaultCellStyle.BackColor = System.Drawing.Color.FromArgb(248, 250, 252);
+            dgvUsers.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(219, 234, 254);
+            dgvUsers.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.FromArgb(30, 58, 138);
+            dgvUsers.GridColor = System.Drawing.Color.FromArgb(226, 232, 240);
+            dgvUsers.Font = new System.Drawing.Font("Segoe UI", 9.5F);
+
+            dgvUsers.CellFormatting += (s, e) =>
+            {
+                if (e.RowIndex >= 0 && dgvUsers.Columns[e.ColumnIndex].DataPropertyName == "IsActive" && e.Value != null)
+                {
+                    bool active = Convert.ToBoolean(e.Value);
+                    e.Value = active ? "🟢 Hoạt động" : "🔒 Đã khóa";
+                    e.FormattingApplied = true;
+                    if (e.CellStyle != null)
+                    {
+                        if (!active)
+                        {
+                            e.CellStyle.ForeColor = System.Drawing.Color.FromArgb(220, 38, 38);
+                            e.CellStyle.Font = new System.Drawing.Font(dgvUsers.Font, System.Drawing.FontStyle.Bold);
+                        }
+                        else
+                        {
+                            e.CellStyle.ForeColor = System.Drawing.Color.FromArgb(5, 150, 105);
+                        }
+                    }
+                }
+            };
+        }
+
+        private void ResizeUserLayout()
+        {
+            if (ClientSize.Width <= 0 || ClientSize.Height <= 0) return;
+
+            panelTop.Visible = false;
+
+            panelGrid.Anchor = AnchorStyles.None;
+            panelDetail.Anchor = AnchorStyles.None;
+
+            int margin = 15;
+            int gap = 15;
+            int detailWidth = 330;
+
+            int availableW = ClientSize.Width - margin * 2 - gap;
+            int gridW = Math.Max(350, availableW - detailWidth);
+            int contentH = Math.Max(350, ClientSize.Height - margin * 2);
+
+            panelGrid.Location = new System.Drawing.Point(margin, margin);
+            panelGrid.Size = new System.Drawing.Size(gridW, contentH);
+
+            dgvUsers.Location = new System.Drawing.Point(15, 45);
+            int pagerY = panelGrid.ClientSize.Height - 42;
+            dgvUsers.Size = new System.Drawing.Size(panelGrid.Width - 30, Math.Max(120, pagerY - dgvUsers.Top - 8));
+            _btnPreviousPage.SetBounds(15, pagerY, 112, 28);
+            _lblPageInfo.SetBounds((panelGrid.ClientSize.Width - 250) / 2, pagerY, 250, 28);
+            _btnNextPage.SetBounds(panelGrid.ClientSize.Width - 127, pagerY, 112, 28);
+
+            panelDetail.Location = new System.Drawing.Point(panelGrid.Right + gap, margin);
+            panelDetail.Size = new System.Drawing.Size(detailWidth, contentH);
+
+            // Compact detail controls so all action buttons fit on any screen!
+            lblDetail.Location = new System.Drawing.Point(15, 12);
+
+            lblUsername.Location = new System.Drawing.Point(15, 42);
+            txtUsername.Location = new System.Drawing.Point(15, 64);
+            txtUsername.Size = new System.Drawing.Size(295, 25);
+
+            lblFullName.Location = new System.Drawing.Point(15, 95);
+            txtFullName.Location = new System.Drawing.Point(15, 117);
+            txtFullName.Size = new System.Drawing.Size(295, 25);
+
+            lblPassword.Location = new System.Drawing.Point(15, 148);
+            txtPassword.Location = new System.Drawing.Point(15, 170);
+            txtPassword.Size = new System.Drawing.Size(295, 25);
+
+            lblRole.Location = new System.Drawing.Point(15, 201);
+            cboRole.Location = new System.Drawing.Point(15, 223);
+            cboRole.Size = new System.Drawing.Size(295, 26);
+
+            btnAddUser.Location = new System.Drawing.Point(15, 265);
+            btnAddUser.Size = new System.Drawing.Size(295, 36);
+
+            btnResetPassword.Location = new System.Drawing.Point(15, 309);
+            btnResetPassword.Size = new System.Drawing.Size(295, 36);
+
+            btnToggleLock.Location = new System.Drawing.Point(15, 353);
+            btnToggleLock.Size = new System.Drawing.Size(142, 36);
+
+            btnClear.Location = new System.Drawing.Point(168, 353);
+            btnClear.Size = new System.Drawing.Size(142, 36);
         }
 
         private async void btnToggleLock_Click(
@@ -192,11 +379,17 @@ namespace MiniSupermarket.WinForms
                         "Bearer",
                         SessionManager.JwtToken);
 
-                var users =
+                var result =
                     await ApiClientService.Client
-                        .GetFromJsonAsync<List<UserDto>>("users");
+                        .GetFromJsonAsync<PagedResultDto<UserDto>>(
+                            $"users/paged?pageNumber={_currentPage}&pageSize={PageSize}");
 
-                dgvUsers.DataSource = users;
+                _currentPage = result?.CurrentPage ?? 1;
+                _totalPages = result?.TotalPages ?? 0;
+                _totalUsers = result?.TotalItems ?? 0;
+                dgvUsers.DataSource = null;
+                dgvUsers.DataSource = result?.Items ?? new List<UserDto>();
+                UpdatePaginationControls();
             }
             catch (Exception ex)
             {
@@ -206,6 +399,22 @@ namespace MiniSupermarket.WinForms
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
             }
+        }
+
+        private void UpdatePaginationControls()
+        {
+            _lblPageInfo.Text = _totalUsers == 0
+                ? "Trang 0 / 0"
+                : $"Trang {_currentPage} / {_totalPages}   •   {_totalUsers:N0} tài khoản";
+            _btnPreviousPage.Enabled = _currentPage > 1;
+            _btnNextPage.Enabled = _currentPage < _totalPages;
+        }
+
+        private async void btnClear_Click(object? sender, EventArgs e)
+        {
+            ClearInputs();
+            _currentPage = 1;
+            await LoadUsersAsync();
         }
 
         private void dgvUsers_CellClick(
@@ -277,6 +486,7 @@ namespace MiniSupermarket.WinForms
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Information);
 
+                    _currentPage = 1;
                     await LoadUsersAsync();
 
                     ClearInputs();
