@@ -1,14 +1,15 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MiniSupermarket.API.Data;
+using MiniSupermarket.API.DTOs;
 using MiniSupermarket.API.Models;
 
 namespace MiniSupermarket.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize] // Phải đăng nhập JWT mới được gọi API
+    [Authorize]
     public class CategoriesController : ControllerBase
     {
         private readonly SupermarketDbContext _context;
@@ -24,6 +25,12 @@ namespace MiniSupermarket.API.Controllers
         {
             var list = await _context.Categories
                 .AsNoTracking()
+                .Select(c => new CategoryDto
+                {
+                    CategoryId = c.CategoryId,
+                    CategoryName = c.CategoryName,
+                    Description = c.Description
+                })
                 .ToListAsync();
 
             return Ok(list);
@@ -33,7 +40,16 @@ namespace MiniSupermarket.API.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var category = await _context.Categories.FindAsync(id);
+            var category = await _context.Categories
+                .AsNoTracking()
+                .Where(c => c.CategoryId == id)
+                .Select(c => new CategoryDto
+                {
+                    CategoryId = c.CategoryId,
+                    CategoryName = c.CategoryName,
+                    Description = c.Description
+                })
+                .FirstOrDefaultAsync();
 
             if (category == null)
                 return NotFound(new { message = "Không tìm thấy nhóm hàng!" });
@@ -49,7 +65,14 @@ namespace MiniSupermarket.API.Controllers
                 return BadRequest(new { message = "Vui lòng nhập từ khóa!" });
 
             var result = await _context.Categories
+                .AsNoTracking()
                 .Where(c => c.CategoryName.Contains(keyword))
+                .Select(c => new CategoryDto
+                {
+                    CategoryId = c.CategoryId,
+                    CategoryName = c.CategoryName,
+                    Description = c.Description
+                })
                 .ToListAsync();
 
             return Ok(result);
@@ -57,35 +80,51 @@ namespace MiniSupermarket.API.Controllers
 
         // POST: api/categories
         [HttpPost]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Create([FromBody] Category newCat)
+        [Authorize(Roles = "Admin,Warehouse")]
+        public async Task<IActionResult> Create([FromBody] CategoryCreateDto dto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
+            var newCat = new Category
+            {
+                CategoryName = dto.CategoryName,
+                Description = dto.Description
+            };
+
             _context.Categories.Add(newCat);
             await _context.SaveChangesAsync();
+
+            var categoryDto = new CategoryDto
+            {
+                CategoryId = newCat.CategoryId,
+                CategoryName = newCat.CategoryName,
+                Description = newCat.Description
+            };
 
             return CreatedAtAction(
                 nameof(GetById),
                 new { id = newCat.CategoryId },
-                newCat);
+                categoryDto);
         }
 
         // PUT: api/categories/1
         [HttpPut("{id}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Warehouse")]
         public async Task<IActionResult> Update(
             int id,
-            [FromBody] Category updateCat)
+            [FromBody] CategoryUpdateDto dto)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var cat = await _context.Categories.FindAsync(id);
 
             if (cat == null)
                 return NotFound(new { message = "Không tìm thấy nhóm hàng cần sửa!" });
 
-            cat.CategoryName = updateCat.CategoryName;
-            cat.Description = updateCat.Description;
+            cat.CategoryName = dto.CategoryName;
+            cat.Description = dto.Description;
 
             await _context.SaveChangesAsync();
 
@@ -94,7 +133,7 @@ namespace MiniSupermarket.API.Controllers
 
         // DELETE: api/categories/1
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Warehouse")]
         public async Task<IActionResult> Delete(int id)
         {
             var cat = await _context.Categories.FindAsync(id);
@@ -108,56 +147,24 @@ namespace MiniSupermarket.API.Controllers
             return NoContent();
         }
 
-        // Chỉ Admin
         [HttpGet("admin-dashboard")]
         [Authorize(Roles = "Admin")]
-        public IActionResult GetAdminDashboard()
+        public async Task<IActionResult> GetAdminDashboard()
         {
-            return Ok(new
+            return await Task.FromResult(Ok(new
             {
                 message = "Chào mừng Admin! Bạn có toàn quyền quản trị hệ thống."
-            });
+            }));
         }
 
-        // Admin và Cashier đều được
         [HttpGet("staff-pos")]
         [Authorize(Roles = "Admin,Cashier")]
-        public IActionResult GetStaffPos()
+        public async Task<IActionResult> GetStaffPos()
         {
-            return Ok(new
+            return await Task.FromResult(Ok(new
             {
                 message = "Màn hình POS Thu ngân sẵn sàng phục vụ bán hàng."
-            });
-        }
-        // ==============================
-        // ADMIN DASHBOARD
-        // ==============================
-
-        [HttpGet("/api/admin-dashboard")]
-        [Authorize(Roles = "Admin")]
-        public IActionResult AdminDashboard()
-        {
-            return Ok(new
-            {
-                message = "Chào mừng Admin đến với Dashboard!",
-                role = "Admin"
-            });
-        }
-
-
-        // ==============================
-        // STAFF POS
-        // ==============================
-
-        [HttpGet("/api/staff-pos")]
-        [Authorize(Roles = "Admin,Cashier")]
-        public IActionResult StaffPos()
-        {
-            return Ok(new
-            {
-                message = "Chào mừng nhân viên đến với POS!",
-                role = User.IsInRole("Admin") ? "Admin" : "Cashier"
-            });
+            }));
         }
     }
 }

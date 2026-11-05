@@ -5,6 +5,7 @@ namespace MiniSupermarket.API.Data
 {
     public class SupermarketDbContext : DbContext
     {
+        // DbContext đại diện cho phiên làm việc với cơ sở dữ liệu SQL Server
         public SupermarketDbContext(
             DbContextOptions<SupermarketDbContext> options)
             : base(options)
@@ -14,6 +15,7 @@ namespace MiniSupermarket.API.Data
         // ==============================
         // CÁC BẢNG
         // ==============================
+        // Khai báo các bảng dữ liệu ánh xạ từ Model
 
         public DbSet<Category> Categories { get; set; }
         public DbSet<Product> Products { get; set; }
@@ -26,7 +28,7 @@ namespace MiniSupermarket.API.Data
         // ==============================
         // DATA SEEDING
         // ==============================
-
+        // Cấu hình dữ liệu mồi ban đầu (Data Seeding)
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -35,7 +37,7 @@ namespace MiniSupermarket.API.Data
             // ==================================================
             // 1. CATEGORY - 15 NHÓM HÀNG
             // ==================================================
-
+            // Nạp sẵn 15 danh mục ban đầu vào SQL Server ngay khi tạo bảng
             modelBuilder.Entity<Category>().HasData(
 
                 new Category
@@ -144,23 +146,14 @@ namespace MiniSupermarket.API.Data
                 }
             );
 
-            modelBuilder.Entity<Order>()
-    .HasOne(o => o.Customer)
-    .WithMany()
-    .HasForeignKey(o => o.CustomerId)
-    .OnDelete(DeleteBehavior.Restrict);
+            // Ghi chú: Toàn bộ khóa ngoại và quan hệ bảng (1-N) được khai báo trực tiếp
 
-            modelBuilder.Entity<OrderDetail>()
-                .HasOne(od => od.Order)
-                .WithMany(o => o.OrderDetails)
-                .HasForeignKey(od => od.OrderId)
-                .OnDelete(DeleteBehavior.Cascade);
+            // trong các lớp Model thông qua thuộc tính Data Annotation [ForeignKey].
 
-            modelBuilder.Entity<OrderDetail>()
-                .HasOne(od => od.Product)
-                .WithMany()
-                .HasForeignKey(od => od.ProductId)
-                .OnDelete(DeleteBehavior.Restrict);
+            // DbContext chỉ đảm nhiệm việc khai báo DbSet<T> và khởi tạo dữ liệu mẫu (Data Seeding).
+
+
+
             // ==================================================
             // 2. PRODUCT - 15 SẢN PHẨM
             // ==================================================

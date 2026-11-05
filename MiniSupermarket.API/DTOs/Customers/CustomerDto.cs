@@ -1,7 +1,6 @@
-﻿
-namespace MiniSupermarket.API.Models
+namespace MiniSupermarket.API.DTOs
 {
-    public class CustomerPagedDto
+    public class CustomerDto
     {
         public int CustomerId { get; set; }
         public string CustomerName { get; set; } = string.Empty;

@@ -75,6 +75,7 @@
 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
+            BackColor = Color.FromArgb(241, 245, 249);
 
             BackColor = Color.FromArgb(245, 247, 250);
             ClientSize = new Size(1100, 650);
@@ -89,6 +90,7 @@
             panelTop.BackColor = Color.White;
             panelTop.Dock = DockStyle.Top;
             panelTop.Height = 75;
+            panelTop.Visible = false;
 
             lblTitle.AutoSize = true;
             lblTitle.Font = new Font(
@@ -108,6 +110,7 @@
             // =========================
 
             panelGrid.BackColor = Color.White;
+            panelGrid.BorderStyle = BorderStyle.FixedSingle;
             panelGrid.Location = new Point(20, 95);
             panelGrid.Size = new Size(700, 530);
             panelGrid.Anchor =
@@ -178,6 +181,7 @@
             // =========================
 
             panelDetail.BackColor = Color.White;
+            panelDetail.BorderStyle = BorderStyle.FixedSingle;
             panelDetail.Location = new Point(740, 95);
             panelDetail.Size = new Size(340, 530);
 
@@ -264,8 +268,8 @@
             btnAddUser.Size = new Size(295, 40);
 
             btnAddUser.Text = "THÊM TÀI KHOẢN";
-            btnAddUser.BackColor =
-                Color.FromArgb(41, 100, 180);
+            btnAddUser.BackColor = Color.FromArgb(5, 150, 105);
+            btnAddUser.Cursor = Cursors.Hand;
 
             btnAddUser.ForeColor = Color.White;
             btnAddUser.FlatStyle = FlatStyle.Flat;
@@ -284,8 +288,8 @@
             btnResetPassword.Text =
                 "ĐẶT LẠI MẬT KHẨU";
 
-            btnResetPassword.BackColor =
-                Color.FromArgb(230, 160, 50);
+            btnResetPassword.BackColor = Color.FromArgb(217, 119, 6);
+            btnResetPassword.Cursor = Cursors.Hand;
 
             btnResetPassword.ForeColor =
                 Color.White;
@@ -308,8 +312,8 @@
             btnToggleLock.Text =
                 "KHÓA / MỞ KHÓA";
 
-            btnToggleLock.BackColor =
-                Color.FromArgb(220, 80, 80);
+            btnToggleLock.BackColor = Color.FromArgb(220, 38, 38);
+            btnToggleLock.Cursor = Cursors.Hand;
 
             btnToggleLock.ForeColor =
                 Color.White;
@@ -331,8 +335,8 @@
 
             btnClear.Text = "LÀM MỚI";
 
-            btnClear.BackColor =
-                Color.FromArgb(100, 110, 120);
+            btnClear.BackColor = Color.FromArgb(71, 85, 105);
+            btnClear.Cursor = Cursors.Hand;
 
             btnClear.ForeColor =
                 Color.White;

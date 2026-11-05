@@ -1,7 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MiniSupermarket.API.Data;
+using MiniSupermarket.API.DTOs;
 using MiniSupermarket.API.Models;
 
 namespace MiniSupermarket.API.Controllers
@@ -18,23 +19,72 @@ namespace MiniSupermarket.API.Controllers
             _context = context;
         }
 
-        // GET: api/users
+        // GET: api/users (Trả về UserDto - bảo mật tuyệt đối không lộ PasswordHash)
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             var users = await _context.Users
                 .AsNoTracking()
+                .Select(u => new UserDto
+                {
+                    UserId = u.UserId,
+                    Username = u.Username,
+                    FullName = u.FullName,
+                    Role = u.Role,
+                    IsActive = u.IsActive
+                })
                 .ToListAsync();
 
             return Ok(users);
         }
 
-        // POST: api/users
-        [HttpPost]
-        public async Task<IActionResult> Create([FromBody] User user)
+        // GET: api/users/paged?pageNumber=1&pageSize=5
+        [HttpGet("paged")]
+        public async Task<IActionResult> GetPaged(
+            [FromQuery] int pageNumber = 1,
+            [FromQuery] int pageSize = 5)
         {
+            pageNumber = Math.Max(1, pageNumber);
+            pageSize = pageSize is < 1 or > 50 ? 5 : pageSize;
+
+            var query = _context.Users.AsNoTracking();
+            int totalItems = await query.CountAsync();
+            int totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
+            pageNumber = totalPages == 0 ? 1 : Math.Min(pageNumber, totalPages);
+
+            var items = await query
+                .OrderByDescending(u => u.UserId)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .Select(u => new UserDto
+                {
+                    UserId = u.UserId,
+                    Username = u.Username,
+                    FullName = u.FullName,
+                    Role = u.Role,
+                    IsActive = u.IsActive
+                })
+                .ToListAsync();
+
+            return Ok(new PagedResult<UserDto>
+            {
+                CurrentPage = pageNumber,
+                PageSize = pageSize,
+                TotalItems = totalItems,
+                TotalPages = totalPages,
+                Items = items
+            });
+        }
+
+        // POST: api/users (Tiếp nhận UserCreateDto)
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody] UserCreateDto dto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var exists = await _context.Users
-                .AnyAsync(u => u.Username == user.Username);
+                .AnyAsync(u => u.Username == dto.Username);
 
             if (exists)
             {
@@ -44,16 +94,31 @@ namespace MiniSupermarket.API.Controllers
                 });
             }
 
-            user.UserId = 0;
-            user.IsActive = true;
+            var user = new User
+            {
+                Username = dto.Username,
+                PasswordHash = dto.Password,
+                FullName = dto.FullName,
+                Role = dto.Role,
+                IsActive = true
+            };
 
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
+            var userDto = new UserDto
+            {
+                UserId = user.UserId,
+                Username = user.Username,
+                FullName = user.FullName,
+                Role = user.Role,
+                IsActive = user.IsActive
+            };
+
             return Ok(new
             {
                 message = "Thêm tài khoản thành công!",
-                user = user
+                user = userDto
             });
         }
 
@@ -63,6 +128,9 @@ namespace MiniSupermarket.API.Controllers
             int id,
             [FromBody] ResetPasswordDto request)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var user = await _context.Users.FindAsync(id);
 
             if (user == null)
@@ -74,7 +142,6 @@ namespace MiniSupermarket.API.Controllers
             }
 
             user.PasswordHash = request.NewPassword;
-
             await _context.SaveChangesAsync();
 
             return Ok(new
@@ -98,7 +165,6 @@ namespace MiniSupermarket.API.Controllers
             }
 
             user.IsActive = !user.IsActive;
-
             await _context.SaveChangesAsync();
 
             return Ok(new
@@ -109,10 +175,5 @@ namespace MiniSupermarket.API.Controllers
                 isActive = user.IsActive
             });
         }
-    }
-
-    public class ResetPasswordDto
-    {
-        public string NewPassword { get; set; } = string.Empty;
     }
 }

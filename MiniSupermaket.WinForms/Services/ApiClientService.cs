@@ -1,4 +1,3 @@
-﻿
 using System;
 using System.Net;
 using System.Net.Http;
@@ -14,12 +13,79 @@ namespace MiniSupermarket.WinForms.Services
     // Lớp dùng chung để giao tiếp với Web API
     public static class ApiClientService
     {
-        // Khởi tạo HttpClient dùng chung cho toàn bộ ứng dụng
-        public static readonly HttpClient Client = new HttpClient
+        // Dùng kiểm tra chứng chỉ mặc định của Windows/.NET. Không bỏ qua lỗi chứng chỉ,
+        // vì đăng nhập và JWT sẽ bị lộ nếu kết nối bị chuyển hướng qua máy chủ giả mạo.
+        private static readonly HttpClientHandler _handler = new();
+
+        // Kết nối tới API phát triển đang bind loopback ở cổng 5055.
+        // Khi triển khai ngoài máy phát triển, hãy cấu hình HTTPS với chứng chỉ hợp lệ.
+        private static string _baseUri = "http://localhost:5055/api/";
+
+        private static HttpClient? _client = CreateHttpClient(_baseUri);
+
+        // Khởi tạo HttpClient dùng chung cho toàn bộ ứng dụng (tự động phục hồi nếu bị dispose)
+        public static HttpClient Client
         {
-            // Địa chỉ gốc của Web API
-            BaseAddress = new Uri("https://localhost:7207/api/")
-        };
+            get
+            {
+                if (_client != null)
+                {
+                    try
+                    {
+                        // DefaultRequestHeaders getter trong .NET Runtime luôn gọi CheckDisposed()
+                        _ = _client.DefaultRequestHeaders;
+                    }
+                    catch (ObjectDisposedException)
+                    {
+                        _client = null;
+                    }
+                }
+                return _client ??= CreateHttpClient(_baseUri);
+            }
+            private set => _client = value;
+        }
+
+        public static void EnsureClientActive()
+        {
+            if (_client != null)
+            {
+                try
+                {
+                    _ = _client.DefaultRequestHeaders;
+                }
+                catch (ObjectDisposedException)
+                {
+                    _client = CreateHttpClient(_baseUri);
+                }
+            }
+            else
+            {
+                _client = CreateHttpClient(_baseUri);
+            }
+        }
+
+        private static HttpClient CreateHttpClient(string baseAddress)
+        {
+            var client = new HttpClient(_handler, disposeHandler: false)
+            {
+                BaseAddress = new Uri(baseAddress),
+                Timeout = TimeSpan.FromSeconds(15)
+            };
+
+            if (!string.IsNullOrWhiteSpace(SessionManager.JwtToken))
+            {
+                client.DefaultRequestHeaders.Authorization =
+                    new AuthenticationHeaderValue("Bearer", SessionManager.JwtToken);
+            }
+
+            return client;
+        }
+
+        public static void SwitchBaseAddress(string newBaseAddress)
+        {
+            _baseUri = newBaseAddress;
+            Client = CreateHttpClient(newBaseAddress);
+        }
 
         // Gắn JWT Token vào Header để xác thực khi gọi API
         public static void AttachToken(string token)
@@ -46,9 +112,9 @@ namespace MiniSupermarket.WinForms.Services
                 Password = password
             };
 
-            // Gửi yêu cầu POST đến API đăng nhập
-            using var response = await Client.PostAsJsonAsync(
-                "auth/login", loginObj);
+            // Không tự chuyển sang HTTP khi HTTPS lỗi: thao tác đó sẽ gửi mật khẩu/JWT
+            // qua kết nối không mã hóa. Hãy cấu hình và tin cậy chứng chỉ HTTPS của API.
+            using var response = await Client.PostAsJsonAsync("auth/login", loginObj);
 
             // Đăng nhập thất bại nếu API trả về mã lỗi
             if (!response.IsSuccessStatusCode)
@@ -68,7 +134,7 @@ namespace MiniSupermarket.WinForms.Services
                     "Phản hồi đăng nhập không có token hoặc role.");
             }
 
-            // Lưu Token, vai trò và tên tài khoản vào phiên làm việc
+            // Lưu Token, vai trò và tên tài khoản vào biến tĩnh của phiên làm việc
             SessionManager.JwtToken =
                 tokenElement.GetString() ?? string.Empty;
 
@@ -84,7 +150,7 @@ namespace MiniSupermarket.WinForms.Services
                 throw new Exception("Server trả về token rỗng.");
             }
 
-            // Gắn Token để sử dụng cho các yêu cầu API tiếp theo
+            // Gắn Token vào Header Authorization: Bearer {token} để sử dụng cho tất cả các Form sau
             AttachToken(SessionManager.JwtToken);
 
             return true;
@@ -158,7 +224,9 @@ namespace MiniSupermarket.WinForms.Services
             // Các lỗi HTTP khác
             throw new HttpRequestException(
                 $"API trả về lỗi {(int)response.StatusCode} " +
-                $"{response.ReasonPhrase}.\n{body}");
+                $"{response.ReasonPhrase}.\n{body}",
+                inner: null,
+                statusCode: response.StatusCode);
         }
     }
 }

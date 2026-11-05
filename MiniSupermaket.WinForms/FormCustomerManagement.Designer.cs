@@ -1,4 +1,4 @@
-﻿namespace MiniSupermarket.WinForms
+namespace MiniSupermarket.WinForms
 {
     partial class FormCustomerManagement
     {
@@ -47,6 +47,7 @@
             btnAdd = new Button();
             btnUpdate = new Button();
             btnDelete = new Button();
+            btnClear = new Button();
             lblKeyword = new Label();
             txtKeyword = new TextBox();
             btnSearch = new Button();
@@ -68,6 +69,7 @@
             lblTitle.Size = new Size(366, 41);
             lblTitle.TabIndex = 1;
             lblTitle.Text = " QUẢN LÝ KHÁCH HÀNG";
+            lblTitle.Visible = false;
 
             // 
             // grpCustomerInfo
@@ -84,12 +86,17 @@
             grpCustomerInfo.Controls.Add(lblCustomerName);
             grpCustomerInfo.Controls.Add(txtCustomerId);
             grpCustomerInfo.Controls.Add(lblCustomerId);
-            grpCustomerInfo.Location = new Point(25, 60);
+            grpCustomerInfo.Location = new Point(20, 15);
             grpCustomerInfo.Name = "grpCustomerInfo";
             grpCustomerInfo.Size = new Size(950, 220);
+
+            grpCustomerInfo.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             grpCustomerInfo.TabIndex = 2;
             grpCustomerInfo.TabStop = false;
-            grpCustomerInfo.Text = " THÔNG TIN KHÁCH HÀNG";
+            grpCustomerInfo.Text = "THÔNG TIN KHÁCH HÀNG";
+            grpCustomerInfo.BackColor = Color.White;
+            grpCustomerInfo.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold);
+            grpCustomerInfo.ForeColor = Color.FromArgb(15, 23, 42);
             // 
             // lblCustomerId
             // 
@@ -192,15 +199,24 @@
             // 
             // pnlActions
             // 
+            pnlActions.Controls.Add(btnClear);
             pnlActions.Controls.Add(btnDelete);
             pnlActions.Controls.Add(btnUpdate);
             pnlActions.Controls.Add(btnAdd);
             pnlActions.Controls.Add(btnLoad);
-            pnlActions.Location = new Point(25, 295);
+            pnlActions.Location = new Point(20, 245);
             pnlActions.Name = "pnlActions";
             pnlActions.Size = new Size(950, 55);
             pnlActions.TabIndex = 3;
             // 
+            // btnClear
+            // 
+            btnClear.Location = new Point(485, 10);
+            btnClear.Name = "btnClear";
+            btnClear.Size = new Size(110, 35);
+            btnClear.TabIndex = 4;
+            btnClear.Text = "Làm mới";
+            btnClear.UseVisualStyleBackColor = true;
             // btnLoad
             // 
             btnLoad.Location = new Point(10, 10);
@@ -240,7 +256,7 @@
             // lblKeyword
             // 
             lblKeyword.AutoSize = true;
-            lblKeyword.Location = new Point(25, 365);
+            lblKeyword.Location = new Point(25, 305);
             lblKeyword.Name = "lblKeyword";
             lblKeyword.Size = new Size(73, 20);
             lblKeyword.TabIndex = 4;
@@ -248,14 +264,14 @@
             // 
             // txtKeyword
             // 
-            txtKeyword.Location = new Point(110, 362);
+            txtKeyword.Location = new Point(105, 302);
             txtKeyword.Name = "txtKeyword";
             txtKeyword.Size = new Size(500, 27);
             txtKeyword.TabIndex = 5;
             // 
             // btnSearch
             // 
-            btnSearch.Location = new Point(625, 360);
+            btnSearch.Location = new Point(615, 298);
             btnSearch.Name = "btnSearch";
             btnSearch.Size = new Size(120, 35);
             btnSearch.TabIndex = 6;
@@ -268,13 +284,26 @@
             dgvCustomers.AllowUserToDeleteRows = false;
             dgvCustomers.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvCustomers.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvCustomers.Location = new Point(12, 401);
+            dgvCustomers.Location = new Point(12, 345);
             dgvCustomers.MultiSelect = false;
             dgvCustomers.Name = "dgvCustomers";
             dgvCustomers.ReadOnly = true;
             dgvCustomers.RowHeadersWidth = 51;
             dgvCustomers.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvCustomers.Size = new Size(950, 183);
+            dgvCustomers.BackgroundColor = Color.White;
+            dgvCustomers.BorderStyle = BorderStyle.None;
+            dgvCustomers.GridColor = Color.FromArgb(226, 232, 240);
+            dgvCustomers.RowTemplate.Height = 35;
+            dgvCustomers.Font = new Font("Segoe UI", 9.5F, FontStyle.Regular);
+            dgvCustomers.EnableHeadersVisualStyles = false;
+            dgvCustomers.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(30, 41, 59);
+            dgvCustomers.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+            dgvCustomers.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold);
+            dgvCustomers.ColumnHeadersHeight = 38;
+            dgvCustomers.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(248, 250, 252);
+            dgvCustomers.DefaultCellStyle.SelectionBackColor = Color.FromArgb(219, 234, 254);
+            dgvCustomers.DefaultCellStyle.SelectionForeColor = Color.FromArgb(30, 58, 138);
+            dgvCustomers.Size = new Size(950, 235);
             dgvCustomers.TabIndex = 11;
             dgvCustomers.Anchor =
                 AnchorStyles.Top |
@@ -286,9 +315,14 @@
             //
             btnPrevious.Location = new Point(12, 590);
             btnPrevious.Name = "btnPrevious";
+            btnPrevious.FlatStyle = FlatStyle.Flat;
+            btnPrevious.BackColor = Color.White;
+            btnPrevious.FlatAppearance.BorderColor = Color.FromArgb(203, 213, 225);
             btnPrevious.Size = new Size(130, 35);
             btnPrevious.TabIndex = 12;
             btnPrevious.Text = "◀ Trang trước";
+
+            btnPrevious.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             btnPrevious.UseVisualStyleBackColor = true;
             btnPrevious.Enabled = false;
 
@@ -302,12 +336,19 @@
             lblPageInfo.Text = "Trang 0 / 0";
             lblPageInfo.TextAlign = ContentAlignment.MiddleCenter;
 
+            lblPageInfo.Anchor = AnchorStyles.Bottom;
+
             //
             // btnNext
             //
             btnNext.Location = new Point(832, 590);
             btnNext.Name = "btnNext";
+            btnNext.FlatStyle = FlatStyle.Flat;
+            btnNext.BackColor = Color.White;
+            btnNext.FlatAppearance.BorderColor = Color.FromArgb(203, 213, 225);
             btnNext.Size = new Size(130, 35);
+
+            btnNext.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             btnNext.TabIndex = 14;
             btnNext.Text = "Trang sau ▶";
             btnNext.UseVisualStyleBackColor = true;
@@ -318,6 +359,7 @@
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
+            BackColor = Color.FromArgb(241, 245, 249);
             ClientSize = new Size(982, 635);
             Controls.Add(btnPrevious);
             Controls.Add(lblPageInfo);
@@ -360,7 +402,8 @@
         private Button btnUpdate;
         private Button btnAdd;
         private Button btnLoad;
-        private Button btnDelete;
+        private Button btnDelete;
+        private Button btnClear;
         private Label lblKeyword;
         private TextBox txtKeyword;
         private Button btnSearch;
@@ -370,3 +413,4 @@
         private Button btnNext;
     }
 }
+
