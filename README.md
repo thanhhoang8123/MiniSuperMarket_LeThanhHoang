@@ -1,17 +1,25 @@
-# 🛒 Mini Supermarket Management System
+# 🛒 HỆ THỐNG QUẢN LÝ SIÊU THỊ MINI
 
-> Ứng dụng quản lý cửa hàng tiện lợi theo mô hình Client–Server, gồm Web API xử lý nghiệp vụ và ứng dụng Windows Forms dành cho nhân viên cửa hàng.
+> **Tên tiếng Anh:** Mini Supermarket Management System
+>
+> **Môn học:** Lập trình Ứng dụng .NET Core · **Mã môn:** 229162
+>
+> **Đề tài:** Phần mềm Quản lý Cửa hàng Tiện lợi – Tạp hóa Phố Thị
+>
+> **Kiến trúc:** Client–Server · **Nền tảng:** .NET 8
 
 ![.NET 8](https://img.shields.io/badge/.NET-8.0-512BD4?logo=dotnet&logoColor=white)
 ![ASP.NET Core](https://img.shields.io/badge/ASP.NET_Core-Web_API-512BD4)
 ![Windows Forms](https://img.shields.io/badge/Frontend-WinForms-0078D4)
 ![SQL Server](https://img.shields.io/badge/Database-SQL_Server-CC2927?logo=microsoftsqlserver&logoColor=white)
 
-## Giới thiệu
+## 📖 1. Giới thiệu
 
 Dự án xây dựng hệ thống quản lý cửa hàng tiện lợi với các nghiệp vụ bán hàng tại quầy, quản lý hàng hóa và khách hàng, theo dõi hóa đơn, phân quyền người dùng và xem báo cáo. Dữ liệu được lưu trong SQL Server; WinForms gọi Web API qua HTTP và nhận kết quả dạng JSON.
 
-## Kiến trúc hệ thống
+Đây là phiên bản tổng hợp của đồ án, kết hợp ứng dụng WinForms với Web API và SQL Server để phục vụ các nghiệp vụ bán hàng và quản lý cửa hàng. README mô tả mã nguồn hiện có trong repository, thay vì giới hạn ở nội dung của một buổi thực hành riêng lẻ.
+
+## 🏗️ 2. Mô hình kiến trúc hệ thống (Client–Server)
 
 ```mermaid
 flowchart LR
@@ -26,18 +34,23 @@ flowchart LR
 - **Database:** SQL Server lưu người dùng, danh mục, sản phẩm, khách hàng, hóa đơn và chi tiết hóa đơn.
 - **Giao tiếp:** REST API qua HTTP; các API cần đăng nhập nhận Bearer Token trong header.
 
-## Chức năng chính
+## ✨ 3. Nội dung và chức năng đã thực hiện
 
-- Đăng nhập, lưu token trong phiên chạy và kiểm soát quyền theo vai trò.
-- Quản lý sản phẩm, danh mục, khách hàng, tài khoản và hóa đơn; hỗ trợ tìm kiếm, phân trang ở các màn hình danh sách.
-- Bán hàng POS: quét/nhập mã vạch, cộng dồn sản phẩm, tính tổng tiền, nhận tiền khách và tính tiền thừa.
-- Tích điểm khách hàng và đổi điểm thưởng khi thanh toán; thao tác thanh toán và cập nhật điểm được xử lý trong transaction.
-- Cảnh báo sản phẩm sắp hết hàng khi tồn kho không quá 10.
-- Dashboard KPI, biểu đồ doanh thu theo ngày, thống kê Top 5 sản phẩm bán chạy.
-- Xuất báo cáo doanh thu và danh sách sản phẩm ra tệp Excel/CSV.
-- Dùng chung `ApiClientService` để gọi API và gửi JWT Bearer Token.
+| | Chức năng |
+|:--:|---|
+| 🧭 | **Giao diện Shell** — menu điều hướng, tiêu đề và vùng làm việc trung tâm; màn hình con nạp trong vùng làm việc. |
+| 🔐 | **Đăng nhập & phân quyền** — lấy token qua API, áp dụng quyền theo vai trò; `ApiClientService` gửi JWT Bearer Token. |
+| 📦 | **Quản lý dữ liệu** — lưới sản phẩm tải từ API, thao tác thêm/sửa/xóa theo quyền; quản lý danh mục, khách hàng, tài khoản và hóa đơn với tìm kiếm và phân trang. |
+| 👥 | **Vai trò thu ngân** — xem sản phẩm/khách hàng/đơn hàng, thêm và sửa khách hàng; không xóa khách hàng hoặc chỉnh sửa sản phẩm. |
+| 🛒 | **Bán hàng POS** — quét mã vạch, cộng dồn số lượng, tính tổng tiền và tiền thừa. |
+| ⭐ | **Tích điểm & đổi điểm** — cập nhật điểm thưởng khi thanh toán trong transaction. |
+| ⚠️ | **Cảnh báo tồn kho** — làm nổi bật mặt hàng có tồn kho không quá 10. |
+| 📊 | **Báo cáo** — 4 thẻ KPI (doanh thu hôm nay, tổng hóa đơn, khách hàng mới, mặt hàng sắp hết), biểu đồ doanh thu theo ngày trong khoảng thời gian chọn, Top 5 sản phẩm bán chạy và xuất Excel/CSV danh sách sản phẩm, hóa đơn, doanh thu. |
+| 💬 | **Thông báo dễ hiểu** — hiển thị lỗi bằng tiếng Việt khi dữ liệu không hợp lệ hoặc dịch vụ không sẵn sàng. |
 
-### Vai trò sử dụng
+> **Phạm vi biểu đồ:** phiên bản hiện tại cho phép chọn ngày bắt đầu/kết thúc và so sánh doanh thu theo từng ngày trong khoảng đã chọn. Chưa có nút chuyển riêng để gom dữ liệu theo tuần hoặc tháng.
+
+### 👤 Vai trò sử dụng
 
 | Vai trò | Quyền nghiệp vụ chính |
 | --- | --- |
@@ -47,7 +60,7 @@ flowchart LR
 
 Quyền thực tế được kiểm tra tại API, không chỉ dựa vào việc ẩn nút trên giao diện.
 
-## Công nghệ sử dụng
+## 🧰 4. Công nghệ sử dụng
 
 | Thành phần | Công nghệ |
 | --- | --- |
@@ -61,7 +74,9 @@ Quyền thực tế được kiểm tra tại API, không chỉ dựa vào việ
 | Biểu đồ | `System.Windows.Forms.DataVisualization.Charting` |
 | Xuất báo cáo | Excel/CSV từ ứng dụng WinForms |
 
-## Cấu trúc Solution
+Các API báo cáo chính gồm `GET /api/reports/dashboard-summary`, `GET /api/reports/daily-revenue?fromDate=yyyy-MM-dd&toDate=yyyy-MM-dd` và `GET /api/reports/top-selling-products?limit=5`. API báo cáo được giới hạn cho vai trò Admin.
+
+## 🗂️ 5. Cấu trúc Solution
 
 ```text
 MiniSuperMarket_LeThanhHoang/
@@ -84,32 +99,45 @@ MiniSuperMarket_LeThanhHoang/
 └── README.md
 ```
 
-## Yêu cầu môi trường
+## 💻 6. Yêu cầu môi trường
 
-- Windows 10/11.
-- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0).
-- SQL Server hoặc SQL Server Express đang chạy trên máy.
-- Visual Studio 2022 (workload **.NET desktop development** và **ASP.NET and web development**) hoặc PowerShell với .NET SDK.
-- SQL Server Management Studio (SSMS) là tùy chọn, hữu ích khi kiểm tra dữ liệu.
+- **Windows 10/11**, vì giao diện người dùng được xây dựng bằng WinForms.
+- **.NET 8 SDK** để restore, build và chạy cả API lẫn ứng dụng desktop. Kiểm tra sau khi cài bằng `dotnet --version` (phiên bản bắt đầu bằng `8.`).
+- **SQL Server** hoặc **SQL Server Express** đã cài và đang chạy. Dự án mặc định kết nối SQL Server cục bộ bằng Windows Authentication.
+- Chọn một cách làm việc: **Visual Studio 2022** với workload **ASP.NET and web development** và **.NET desktop development**, hoặc PowerShell/Terminal cùng .NET SDK.
+- **SQL Server Management Studio (SSMS)** dùng để chạy script báo cáo và xem dữ liệu; có thể cài riêng.
 
-## Cài đặt cơ sở dữ liệu
+## 📥 7. Lấy mã nguồn
 
-1. Mở `MiniSupermarket.API/appsettings.json` và kiểm tra `ConnectionStrings:DefaultConnection`. Cấu hình mặc định dùng SQL Server cục bộ với Windows Authentication và database `ThanhHoang_MiniSupermarketDb`.
-2. Nếu SQL Server của bạn dùng instance khác, cập nhật connection string. Ví dụ SQL Server Express:
+Mở PowerShell tại thư mục muốn lưu dự án và chạy:
+
+```powershell
+git clone https://github.com/thanhhoang8123/MiniSuperMarket_LeThanhHoang.git
+cd MiniSuperMarket_LeThanhHoang
+```
+
+Nếu đã có bản mã nguồn trên máy, mở PowerShell tại thư mục chứa `MiniSuperMarket_LeThanhHoang.sln` và bỏ qua bước clone.
+
+## 🗄️ 8. Cài đặt cơ sở dữ liệu
+
+1. Đảm bảo dịch vụ SQL Server đang chạy. Mở `MiniSupermarket.API/appsettings.json` và kiểm tra `ConnectionStrings:DefaultConnection`. Cấu hình mặc định dùng Windows Authentication với server `localhost` và database `ThanhHoang_MiniSupermarketDb`.
+2. Nếu máy dùng SQL Server Express, đổi `Server` thành tên instance thực tế. Ví dụ:
 
    ```json
    "DefaultConnection": "Server=localhost\\SQLEXPRESS;Database=ThanhHoang_MiniSupermarketDb;Trusted_Connection=True;TrustServerCertificate=True;"
    ```
 
-3. Mở PowerShell tại thư mục gốc solution, cài công cụ EF nếu máy chưa có:
+   Nếu đang dùng instance có tên như `localhost\\MSSQLSERVER01`, thay giá trị `Server` tương ứng. Cần đảm bảo tài khoản Windows chạy ứng dụng có quyền kết nối SQL Server.
+
+3. Mở PowerShell ở thư mục gốc solution và cài công cụ Entity Framework nếu chưa có:
 
    ```powershell
    dotnet tool install --global dotnet-ef --version 8.0.31
    ```
 
-   Nếu đã cài `dotnet-ef`, dùng `dotnet tool update --global dotnet-ef --version 8.0.31`.
+   Nếu đã cài `dotnet-ef`, thay bằng `dotnet tool update --global dotnet-ef --version 8.0.31`.
 
-4. Tạo/cập nhật database từ migrations:
+4. Tạo database và các bảng từ migrations. Chạy lần lượt:
 
    ```powershell
    cd MiniSupermarket.API
@@ -117,13 +145,13 @@ MiniSuperMarket_LeThanhHoang/
    dotnet ef database update
    ```
 
-Migrations sẽ tạo cấu trúc bảng và dữ liệu khởi tạo được khai báo trong dự án. Hãy dùng database thử nghiệm khi thực hành thanh toán vì thao tác này tạo hóa đơn và cập nhật tồn kho/điểm thưởng.
+Lệnh `database update` tạo/cập nhật cấu trúc bảng và dữ liệu mẫu theo migrations. Nếu lệnh báo không tìm thấy `dotnet-ef`, đóng/mở lại terminal sau khi cài tool rồi chạy lại. Nếu không kết nối được database, kiểm tra dịch vụ SQL Server, tên instance và quyền Windows Authentication.
 
-Để bật đầy đủ báo cáo dùng stored procedure, mở và thực thi hai script `MiniSupermarket.API/Scripts/sp_GetDailyRevenue.sql` và `MiniSupermarket.API/Scripts/sp_GetRevenueByCashier.sql` trong SSMS sau khi database đã được tạo.
+5. Để bật đầy đủ báo cáo doanh thu, mở hai file `MiniSupermarket.API/Scripts/sp_GetDailyRevenue.sql` và `MiniSupermarket.API/Scripts/sp_GetRevenueByCashier.sql` trong SSMS, kết nối đúng SQL Server rồi nhấn **Execute** sau khi database đã được tạo.
 
-## Chạy Backend (Web API)
+## 🚀 9. Chạy Backend (Web API)
 
-Mở PowerShell ở thư mục gốc solution:
+Mở cửa sổ PowerShell mới tại thư mục gốc solution, cùng cấp với file `.sln`, rồi chạy:
 
 ```powershell
 cd MiniSupermarket.API
@@ -131,11 +159,11 @@ dotnet restore
 dotnet run --launch-profile http
 ```
 
-API chạy tại `http://localhost:5055`; Swagger tại [http://localhost:5055/swagger](http://localhost:5055/swagger). Giữ cửa sổ này mở trong khi chạy WinForms. Profile `http` được dùng vì địa chỉ API mặc định của WinForms là `http://localhost:5055/api/`.
+Khi terminal báo ứng dụng đã chạy, mở [http://localhost:5055/swagger](http://localhost:5055/swagger) để xem và thử API. Giữ cửa sổ API mở trong suốt thời gian dùng WinForms. Profile `http` dùng cổng `5055`, khớp địa chỉ API mặc định của WinForms (`http://localhost:5055/api/`).
 
-## Chạy Frontend (WinForms)
+## 🖥️ 10. Chạy Frontend (WinForms)
 
-Mở một cửa sổ PowerShell khác tại thư mục gốc solution:
+Mở cửa sổ PowerShell thứ hai (không tắt API), tại thư mục gốc solution, rồi chạy:
 
 ```powershell
 cd MiniSupermaket.WinForms
@@ -143,9 +171,18 @@ dotnet restore
 dotnet run
 ```
 
-Hoặc mở `MiniSuperMarket_LeThanhHoang.sln` trong Visual Studio 2022, đặt `MiniSupermarket.API` và `MiniSupermarket.WinForms` làm startup projects cùng lúc; trước đó cần cập nhật database và đảm bảo API sử dụng cổng `5055`.
+Hoặc mở `MiniSuperMarket_LeThanhHoang.sln` trong Visual Studio 2022. Để chạy cả hai ứng dụng cùng lúc, nhấp phải solution → **Configure Startup Projects** → chọn **Multiple startup projects** → đặt cả `MiniSupermarket.API` và `MiniSupermaket.WinForms` thành **Start**. Chọn profile `http` cho API và đảm bảo API khởi động trước khi đăng nhập WinForms.
 
-## Tài khoản demo và kiểm thử thủ công
+### 🧯 Khắc phục lỗi khởi động thường gặp
+
+| Hiện tượng | Cách xử lý |
+| --- | --- |
+| API báo lỗi kết nối SQL Server | Kiểm tra dịch vụ SQL Server, tên server/instance trong connection string và quyền đăng nhập Windows; chạy lại `dotnet ef database update`. |
+| WinForms báo không kết nối được API | Xác nhận API đang chạy tại cổng `5055`; kiểm tra địa chỉ trong `MiniSupermaket.WinForms/Services/ApiClientService.cs`. |
+| Không đăng nhập được tài khoản demo | Xác nhận migrations đã chạy thành công để dữ liệu khởi tạo được thêm vào database. |
+| Swagger không tự mở | Mở thủ công `http://localhost:5055/swagger` sau khi terminal báo API đã khởi động. |
+
+## 🧪 11. Tài khoản demo và kiểm thử thủ công
 
 Các tài khoản mẫu được khai báo trong dữ liệu khởi tạo của dự án:
 
@@ -168,7 +205,7 @@ Các tài khoản mẫu được khai báo trong dữ liệu khởi tạo của 
 
 Kiểm tra tính năng thanh toán làm thay đổi dữ liệu. Dùng database thử nghiệm và ghi lại dữ liệu cần phục hồi trước khi chạy các kịch bản.
 
-### Build Solution
+### 🛠️ Build toàn bộ Solution
 
 Từ thư mục gốc:
 
@@ -177,7 +214,7 @@ dotnet restore MiniSuperMarket_LeThanhHoang.sln
 dotnet build MiniSuperMarket_LeThanhHoang.sln
 ```
 
-## Git và `.gitignore`
+## 🌿 12. Git và `.gitignore`
 
 `.gitignore` loại trừ các thư mục đầu ra và phụ thuộc được tạo tự động như `bin/`, `obj/`, `node_modules/`, cùng cache của Visual Studio. Không commit các thư mục build/dependency này; mã nguồn, file solution, migrations và scripts cần thiết vẫn được quản lý bằng Git.
 
@@ -189,7 +226,7 @@ git rm -r --cached --ignore-unmatch -- ':(glob)**/bin/**' ':(glob)**/obj/**' ':(
 
 Lệnh trên chỉ gỡ khỏi Git index, không xóa các thư mục khỏi máy.
 
-## Tác giả
+## 👨‍💻 13. Tác giả
 
 **Lê Thanh Hoàng**
 
