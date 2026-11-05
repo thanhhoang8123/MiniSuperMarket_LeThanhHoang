@@ -234,6 +234,3 @@ Lệnh trên chỉ gỡ khỏi Git index, không xóa các thư mục khỏi má
 
 Repository: [MiniSuperMarket_LeThanhHoang](https://github.com/thanhhoang8123/MiniSuperMarket_LeThanhHoang)
 
----
-
-README này mô tả cách cài đặt và chạy phiên bản mã nguồn trong repository. Khi thay đổi cổng API, SQL Server instance hoặc cấu hình xác thực, hãy cập nhật hướng dẫn tương ứng để người khác có thể tái hiện môi trường.
