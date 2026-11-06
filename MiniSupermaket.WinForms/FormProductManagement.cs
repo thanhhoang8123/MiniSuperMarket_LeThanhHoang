@@ -401,7 +401,7 @@ catch (Exception ex)
 
     MessageBox.Show(
 
-    "Không thể tải danh mục:\n" + ex.Message,
+    "Không thể tải danh mục:\n" + MiniSupermarket.WinForms.Services.ApiClientService.GetFriendlyExceptionMessage(ex),
 
     "Lỗi",
 
@@ -515,7 +515,7 @@ catch (Exception ex)
 
     MessageBox.Show(
 
-    "Không thể tải sản phẩm:\n" + ex.Message,
+    "Không thể tải sản phẩm:\n" + MiniSupermarket.WinForms.Services.ApiClientService.GetFriendlyExceptionMessage(ex),
 
     "Lỗi",
 
@@ -787,19 +787,9 @@ else
 
 {
 
-    string error =
-
-    await response.Content.ReadAsStringAsync();
-
     MessageBox.Show(
-
-    $"Không thể thêm sản phẩm.\n" +
-
-    $"Mã lỗi: {(int)response.StatusCode} - " +
-
-    $"{response.StatusCode}\n{error}",
-
-    "Lỗi",
+    await GetFriendlyProductErrorAsync(response, "thêm"),
+    "Chưa thể thêm sản phẩm",
 
     MessageBoxButtons.OK,
 
@@ -809,13 +799,16 @@ else
 
 }
 
-catch (Exception ex)
+catch (Exception)
 
 {
 
     MessageBox.Show(
 
-    "Lỗi khi thêm sản phẩm:\n" + ex.Message);
+    "Không thêm được sản phẩm lúc này. Vui lòng thử lại; nếu lỗi tiếp tục, hãy báo quản lý.",
+    "Chưa thể thêm sản phẩm",
+    MessageBoxButtons.OK,
+    MessageBoxIcon.Error);
 
 }
 
@@ -891,19 +884,9 @@ else
 
 {
 
-    string error =
-
-    await response.Content.ReadAsStringAsync();
-
     MessageBox.Show(
-
-    $"Không thể cập nhật sản phẩm.\n" +
-
-    $"Mã lỗi: {(int)response.StatusCode} - " +
-
-    $"{response.StatusCode}\n{error}",
-
-    "Lỗi",
+    await GetFriendlyProductErrorAsync(response, "cập nhật"),
+    "Chưa thể cập nhật sản phẩm",
 
     MessageBoxButtons.OK,
 
@@ -913,13 +896,16 @@ else
 
 }
 
-catch (Exception ex)
+catch (Exception)
 
 {
 
     MessageBox.Show(
 
-    "Lỗi khi cập nhật sản phẩm:\n" + ex.Message);
+    "Không cập nhật được sản phẩm lúc này. Vui lòng thử lại; nếu lỗi tiếp tục, hãy báo quản lý.",
+    "Chưa thể cập nhật sản phẩm",
+    MessageBoxButtons.OK,
+    MessageBoxIcon.Error);
 
 }
 
@@ -987,19 +973,9 @@ else
 
 {
 
-    string error =
-
-    await response.Content.ReadAsStringAsync();
-
     MessageBox.Show(
-
-    $"Không thể xóa sản phẩm.\n" +
-
-    $"Mã lỗi: {(int)response.StatusCode} - " +
-
-    $"{response.StatusCode}\n{error}",
-
-    "Lỗi",
+    await GetFriendlyProductErrorAsync(response, "xóa"),
+    "Chưa thể xóa sản phẩm",
 
     MessageBoxButtons.OK,
 
@@ -1009,19 +985,64 @@ else
 
 }
 
-catch (Exception ex)
+catch (Exception)
 
 {
 
     MessageBox.Show(
 
-    "Lỗi khi xóa sản phẩm:\n" + ex.Message);
+    "Không xóa được sản phẩm lúc này. Vui lòng thử lại; nếu lỗi tiếp tục, hãy báo quản lý.",
+    "Chưa thể xóa sản phẩm",
+    MessageBoxButtons.OK,
+    MessageBoxIcon.Error);
 
 }
 
 }
 
 
+
+private static async Task<string> GetFriendlyProductErrorAsync(HttpResponseMessage response, string action)
+{
+    if (response.StatusCode == System.Net.HttpStatusCode.Conflict && action == "xóa")
+    {
+        return "Không thể xóa mặt hàng này vì sản phẩm đã có trong hóa đơn. Bạn có thể ngừng kinh doanh sản phẩm thay vì xóa.";
+    }
+
+    if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+    {
+        try
+        {
+            string body = await response.Content.ReadAsStringAsync();
+            using var document = System.Text.Json.JsonDocument.Parse(body);
+            if (document.RootElement.TryGetProperty("message", out var messageElement) &&
+                messageElement.ValueKind == System.Text.Json.JsonValueKind.String)
+            {
+                string? message = messageElement.GetString()?.Trim();
+                if (!string.IsNullOrWhiteSpace(message))
+                    return message;
+            }
+        }
+        catch (System.Text.Json.JsonException)
+        {
+            // Dùng câu hướng dẫn chung khi API không trả về JSON hợp lệ.
+        }
+
+        return "Thông tin sản phẩm chưa hợp lệ. Vui lòng kiểm tra mã vạch, tên, giá bán, tồn kho và danh mục.";
+    }
+
+    if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+        return "Không tìm thấy sản phẩm này. Danh sách có thể đã thay đổi; vui lòng tải lại rồi thử lại.";
+
+    if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized ||
+        response.StatusCode == System.Net.HttpStatusCode.Forbidden)
+        return "Tài khoản hiện tại không có quyền thực hiện thao tác này. Nếu cần, hãy liên hệ quản lý.";
+
+    if ((int)response.StatusCode >= 500)
+        return $"Máy chủ chưa thể {action} sản phẩm lúc này. Vui lòng thử lại sau.";
+
+    return $"Chưa thể {action} sản phẩm. Vui lòng kiểm tra thông tin và thử lại.";
+}
 
 // 12. TÌM KIẾM
 
@@ -1232,7 +1253,7 @@ return true;
             catch (Exception ex)
             {
                 MessageBox.Show(
-                    "Đã xảy ra sự cố khi xuất tệp Excel:\n" + ex.Message,
+                    "Đã xảy ra sự cố khi xuất tệp Excel:\n" + MiniSupermarket.WinForms.Services.ApiClientService.GetFriendlyExceptionMessage(ex),
                     "Lỗi xuất file",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);

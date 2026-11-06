@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -70,7 +70,7 @@ namespace MiniSupermarket.WinForms
             catch (Exception ex)
             {
                 MessageBox.Show(
-                    "Lỗi đăng nhập hoặc kết nối đến Server:\n" + ex.Message,
+                    "Lỗi đăng nhập hoặc kết nối đến Server:\n" + MiniSupermarket.WinForms.Services.ApiClientService.GetFriendlyExceptionMessage(ex),
                     "Lỗi hệ thống",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);

@@ -293,7 +293,7 @@ namespace MiniSupermarket.WinForms
             catch (Exception ex)
             {
                 MessageBox.Show(
-                    "Không tải được danh sách đơn hàng.\n\n" + ex.Message,
+                    "Không tải được danh sách đơn hàng.\n\n" + MiniSupermarket.WinForms.Services.ApiClientService.GetFriendlyExceptionMessage(ex),
                     "Lỗi tải dữ liệu",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
@@ -375,7 +375,7 @@ namespace MiniSupermarket.WinForms
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Không thể xuất danh sách hóa đơn." + Environment.NewLine + Environment.NewLine + ex.Message, "Lỗi xuất file", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Không thể xuất danh sách hóa đơn." + Environment.NewLine + Environment.NewLine + MiniSupermarket.WinForms.Services.ApiClientService.GetFriendlyExceptionMessage(ex), "Lỗi xuất file", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -416,7 +416,7 @@ namespace MiniSupermarket.WinForms
             {
                 MessageBox.Show(
                     "Không tải được chi tiết đơn hàng.\n\n" +
-                    ex.Message,
+                    MiniSupermarket.WinForms.Services.ApiClientService.GetFriendlyExceptionMessage(ex),
                     "Lỗi tải chi tiết",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);

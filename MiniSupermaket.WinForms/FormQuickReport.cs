@@ -136,14 +136,14 @@ namespace MiniSupermarket.WinForms
 
                 MessageBox.Show(
                     "Không thể kết nối máy chủ API.\n" +
-                    "Hãy kiểm tra xem API có đang khởi chạy hay không.\n\n" + ex.Message,
+                    "Hãy kiểm tra xem API có đang khởi chạy hay không.\n\n" + MiniSupermarket.WinForms.Services.ApiClientService.GetFriendlyExceptionMessage(ex),
                     "Lỗi kết nối",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
             }
             catch (Exception ex)
             {
-                lblStatus.Text = "Tải dữ liệu thất bại: " + ex.Message;
+                lblStatus.Text = "Tải dữ liệu thất bại: " + MiniSupermarket.WinForms.Services.ApiClientService.GetFriendlyExceptionMessage(ex);
                 lblStatus.ForeColor = Color.Red;
             }
             finally
@@ -179,7 +179,7 @@ namespace MiniSupermarket.WinForms
             catch (HttpRequestException ex) when (ex.StatusCode.HasValue)
             {
                 SetKpiValues("—");
-                return $"API không tải được KPI (HTTP {(int)ex.StatusCode.Value}). Hãy kiểm tra log máy chủ và migration cơ sở dữ liệu.";
+                return MiniSupermarket.WinForms.Services.ApiClientService.GetFriendlyExceptionMessage(ex);
             }
             catch (HttpRequestException)
             {
@@ -189,12 +189,7 @@ namespace MiniSupermarket.WinForms
             catch (Exception ex)
             {
                 SetKpiValues("—");
-                if (ex.Message.Contains("401", StringComparison.OrdinalIgnoreCase) ||
-                    ex.Message.Contains("403", StringComparison.OrdinalIgnoreCase))
-                {
-                    return ex.Message;
-                }
-                return "Không tải được KPI. Hãy kiểm tra quyền Admin, cấu hình API và tình trạng cơ sở dữ liệu.";
+                return MiniSupermarket.WinForms.Services.ApiClientService.GetFriendlyExceptionMessage(ex);
             }
         }
 
@@ -292,7 +287,7 @@ namespace MiniSupermarket.WinForms
             }
             catch (Exception ex)
             {
-                lblStatus.Text = "Không thể vẽ biểu đồ doanh thu: " + ex.Message;
+                lblStatus.Text = "Không thể vẽ biểu đồ doanh thu: " + MiniSupermarket.WinForms.Services.ApiClientService.GetFriendlyExceptionMessage(ex);
                 lblStatus.ForeColor = Color.Red;
             }
         }
@@ -336,7 +331,7 @@ namespace MiniSupermarket.WinForms
             }
             catch (Exception ex)
             {
-                lblStatus.Text = "Không thể tải top sản phẩm: " + ex.Message;
+                lblStatus.Text = "Không thể tải top sản phẩm: " + MiniSupermarket.WinForms.Services.ApiClientService.GetFriendlyExceptionMessage(ex);
                 lblStatus.ForeColor = Color.Red;
             }
         }
@@ -482,7 +477,7 @@ namespace MiniSupermarket.WinForms
             catch (Exception ex)
             {
                 MessageBox.Show(
-                    "Đã xảy ra sự cố khi xuất báo cáo Excel:\n" + ex.Message,
+                    "Đã xảy ra sự cố khi xuất báo cáo Excel:\n" + MiniSupermarket.WinForms.Services.ApiClientService.GetFriendlyExceptionMessage(ex),
                     "Lỗi xuất file",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);

@@ -54,9 +54,9 @@ flowchart LR
 
 | Vai trò | Quyền nghiệp vụ chính |
 | --- | --- |
-| **Admin / Quản lý** | Toàn quyền quản trị, tài khoản, báo cáo và các nghiệp vụ cửa hàng. |
-| **Cashier / Thu ngân** | Bán hàng POS; xem sản phẩm, khách hàng, hóa đơn; thêm/cập nhật khách hàng; không xóa khách hàng và không thêm/sửa/xóa sản phẩm. |
-| **Warehouse / Quản lý kho** | Tra cứu và quản lý danh mục, sản phẩm, tồn kho theo quyền API. |
+| **Admin / Quản lý** | Truy cập các màn hình quản trị, POS, danh mục, sản phẩm, khách hàng, đơn hàng, báo cáo và tài khoản. Có quyền quản lý toàn hệ thống. |
+| **Cashier / Thu ngân** | Truy cập POS, sản phẩm, khách hàng và đơn hàng. Có thể thêm/cập nhật khách hàng; không xóa khách hàng và không thêm/sửa/xóa sản phẩm. Không truy cập báo cáo hoặc quản lý tài khoản. |
+| **Warehouse / Quản lý kho** | Truy cập quản lý danh mục và sản phẩm để phục vụ nghiệp vụ kho; không truy cập POS, khách hàng, đơn hàng, báo cáo hoặc tài khoản. |
 
 Quyền thực tế được kiểm tra tại API, không chỉ dựa vào việc ẩn nút trên giao diện.
 
@@ -192,16 +192,34 @@ Các tài khoản mẫu được khai báo trong dữ liệu khởi tạo của 
 | Thu ngân | `cashier01` | `123456` |
 | Kho | `ware01` | `123456` |
 
-Đây là tài khoản phục vụ chạy thử đồ án. Hãy đổi mật khẩu và cấu hình khóa JWT riêng trước khi triển khai thực tế; không dùng thông tin demo cho dữ liệu hoặc môi trường thật.
+Đây là tài khoản được seed trong database để kiểm tra đồ án. Dùng mật khẩu `123456` cho cả ba tài khoản. Đây là thông tin demo; hãy thay đổi trước khi triển khai thực tế.
 
 ### Quy trình kiểm tra nhanh
 
 1. Chạy API và xác nhận Swagger mở được.
-2. Chạy WinForms, đăng nhập lần lượt bằng các vai trò demo và kiểm tra quyền trên giao diện.
-3. Thử tìm kiếm/phân trang sản phẩm, danh mục, khách hàng, hóa đơn và tài khoản theo vai trò.
-4. Trên POS, thử quét mã vạch, tăng số lượng, tra cứu khách hàng, đổi điểm và thanh toán bằng database thử nghiệm.
-5. Đăng nhập quản lý để kiểm tra KPI, bộ lọc ngày, biểu đồ, Top 5 và tải báo cáo Excel/CSV.
-6. Kiểm tra cảnh báo hàng tồn thấp với sản phẩm có tồn kho `<= 10`.
+2. Chạy WinForms và đăng nhập lần lượt bằng `admin01`, `cashier01`, `ware01` (mật khẩu `123456`). Đăng xuất trước khi chuyển tài khoản.
+3. Với **Admin**, xác nhận hiển thị các màn hình quản trị, tài khoản và báo cáo; thử tìm kiếm, phân trang và các thao tác quản lý.
+4. Với **Cashier**, xác nhận chỉ thấy POS, sản phẩm, khách hàng và đơn hàng. Thử thêm/sửa khách hàng; nút xóa khách hàng và các thao tác thêm/sửa/xóa sản phẩm phải không khả dụng. Thử mở báo cáo và tài khoản, các chức năng này không được cấp quyền.
+5. Với **Warehouse**, xác nhận chỉ thấy màn hình danh mục và sản phẩm; thử các thao tác quản lý kho, rồi xác nhận POS, khách hàng, đơn hàng, báo cáo và tài khoản không khả dụng.
+6. Trên POS, quét mã vạch để kiểm tra tên hàng và cộng số lượng, tra cứu khách hàng, đổi điểm, nhập tiền khách đưa và thanh toán trong database thử nghiệm.
+7. Đăng nhập Admin để kiểm tra KPI, chọn khoảng ngày cho biểu đồ, xem Top 5 và xuất báo cáo Excel/CSV.
+8. Mở danh sách sản phẩm và xác nhận tồn kho `<= 10` được cảnh báo bằng màu nền.
+
+### Ma trận kiểm thử phân quyền
+
+| Thao tác kiểm tra | Admin | Cashier | Warehouse |
+| --- |:---:|:---:|:---:|
+| Mở POS và tạo hóa đơn | ✅ | ✅ | 🚫 |
+| Xem sản phẩm | ✅ | ✅ | ✅ |
+| Thêm/sửa/xóa sản phẩm | ✅ | 🚫 | ✅ |
+| Xem danh mục | ✅ | 🚫 | ✅ |
+| Xem khách hàng và đơn hàng | ✅ | ✅ | 🚫 |
+| Thêm/sửa khách hàng | ✅ | ✅ | 🚫 |
+| Xóa khách hàng | ✅ | 🚫 | 🚫 |
+| Xem báo cáo và xuất báo cáo | ✅ | 🚫 | 🚫 |
+| Quản lý tài khoản | ✅ | 🚫 | 🚫 |
+
+**Kết quả mong đợi:** giao diện chỉ hiển thị đúng các mục được cấp quyền; nếu gọi trực tiếp API bằng token của vai trò không đủ quyền, API từ chối yêu cầu. Ghi lại ảnh màn hình menu và thông báo từ chối để làm minh chứng báo cáo.
 
 Kiểm tra tính năng thanh toán làm thay đổi dữ liệu. Dùng database thử nghiệm và ghi lại dữ liệu cần phục hồi trước khi chạy các kịch bản.
 
@@ -234,3 +252,4 @@ Lệnh trên chỉ gỡ khỏi Git index, không xóa các thư mục khỏi má
 
 Repository: [MiniSuperMarket_LeThanhHoang](https://github.com/thanhhoang8123/MiniSuperMarket_LeThanhHoang)
 
+---

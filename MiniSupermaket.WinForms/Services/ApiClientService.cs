@@ -204,29 +204,60 @@ namespace MiniSupermarket.WinForms.Services
         private static async Task<string> ReadResponseAsync(
             HttpResponseMessage response)
         {
-            // Đọc nội dung phản hồi từ Server
-            string body = await response.Content.ReadAsStringAsync();
-
             // Nếu thành công thì trả về dữ liệu
             if (response.IsSuccessStatusCode)
-                return body;
+                return await response.Content.ReadAsStringAsync();
 
-            // Lỗi 401: Chưa đăng nhập hoặc phiên làm việc hết hạn
-            if (response.StatusCode == HttpStatusCode.Unauthorized)
-                throw new Exception(
-                    "Phiên làm việc hết hạn hoặc chưa đăng nhập (401).");
+            string friendlyMessage = response.StatusCode switch
+            {
+                HttpStatusCode.Unauthorized => "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.",
+                HttpStatusCode.Forbidden => "Tài khoản hiện tại không có quyền thực hiện thao tác này. Vui lòng liên hệ quản lý nếu cần.",
+                HttpStatusCode.BadRequest => "Thông tin gửi lên chưa hợp lệ. Vui lòng kiểm tra lại dữ liệu rồi thử lại.",
+                HttpStatusCode.NotFound => "Không tìm thấy dữ liệu cần thao tác. Danh sách có thể đã thay đổi, vui lòng tải lại.",
+                HttpStatusCode.Conflict => "Dữ liệu đang được sử dụng hoặc vừa thay đổi. Vui lòng tải lại danh sách rồi thử lại.",
+                _ when (int)response.StatusCode >= 500 => "Máy chủ đang gặp sự cố. Vui lòng thử lại sau; nếu lỗi tiếp tục, hãy báo quản lý.",
+                _ => "Chưa thể hoàn tất yêu cầu. Vui lòng kiểm tra kết nối và thử lại."
+            };
 
-            // Lỗi 403: Không có quyền thực hiện thao tác
-            if (response.StatusCode == HttpStatusCode.Forbidden)
-                throw new Exception(
-                    "Bạn không có quyền thực hiện thao tác này (403).");
-
-            // Các lỗi HTTP khác
             throw new HttpRequestException(
-                $"API trả về lỗi {(int)response.StatusCode} " +
-                $"{response.ReasonPhrase}.\n{body}",
+                friendlyMessage,
                 inner: null,
                 statusCode: response.StatusCode);
+        }
+
+        public static string GetFriendlyExceptionMessage(Exception exception)
+        {
+            if (exception is HttpRequestException requestException)
+            {
+                return requestException.StatusCode switch
+                {
+                    HttpStatusCode.Unauthorized => "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.",
+                    HttpStatusCode.Forbidden => "Tài khoản hiện tại không có quyền thực hiện thao tác này. Vui lòng liên hệ quản lý nếu cần.",
+                    HttpStatusCode.NotFound => "Không tìm thấy dữ liệu cần thao tác. Vui lòng tải lại danh sách rồi thử lại.",
+                    HttpStatusCode.Conflict => "Dữ liệu đang được sử dụng hoặc vừa thay đổi. Vui lòng tải lại danh sách rồi thử lại.",
+                    _ when requestException.StatusCode.HasValue => "Máy chủ chưa thể xử lý yêu cầu. Vui lòng thử lại sau.",
+                    _ => "Chưa kết nối được máy chủ. Vui lòng kiểm tra mạng hoặc thử lại sau."
+                };
+            }
+
+            if (exception is TaskCanceledException)
+                return "Yêu cầu mất quá nhiều thời gian. Vui lòng kiểm tra kết nối rồi thử lại.";
+
+            return "Đã xảy ra sự cố khi xử lý yêu cầu. Vui lòng thử lại; nếu lỗi tiếp tục, hãy báo quản lý.";
+        }
+
+        public static string GetFriendlyResponseMessage(HttpStatusCode statusCode, string action)
+        {
+            return statusCode switch
+            {
+                HttpStatusCode.Unauthorized => "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.",
+                HttpStatusCode.Forbidden => "Tài khoản hiện tại không có quyền thực hiện thao tác này. Vui lòng liên hệ quản lý nếu cần.",
+                HttpStatusCode.BadRequest => $"Thông tin chưa hợp lệ nên không thể {action}. Vui lòng kiểm tra lại các trường đã nhập.",
+                HttpStatusCode.NotFound => $"Không tìm thấy dữ liệu cần {action}. Vui lòng tải lại danh sách rồi thử lại.",
+                HttpStatusCode.Conflict => $"Không thể {action} vì dữ liệu đang được sử dụng hoặc vừa thay đổi. Vui lòng tải lại danh sách.",
+                _ when (int)statusCode >= 500 => "Máy chủ đang gặp sự cố. Vui lòng thử lại sau; nếu lỗi tiếp tục, hãy báo quản lý.",
+                _ => $"Chưa thể {action} lúc này. Vui lòng thử lại sau."
+            };
         }
     }
 }
