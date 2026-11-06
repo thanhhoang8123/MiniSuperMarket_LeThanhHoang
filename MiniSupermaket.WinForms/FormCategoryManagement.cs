@@ -261,7 +261,7 @@ namespace MiniSupermarket.WinForms
 
                     "Không thể kết nối đến Web API.\n\n" +
 
-                    ex.Message,
+                    MiniSupermarket.WinForms.Services.ApiClientService.GetFriendlyExceptionMessage(ex),
 
                     "Lỗi kết nối",
 
@@ -279,7 +279,7 @@ namespace MiniSupermarket.WinForms
 
                     "Lỗi tải danh sách nhóm hàng:\n\n" +
 
-                    ex.Message,
+                    MiniSupermarket.WinForms.Services.ApiClientService.GetFriendlyExceptionMessage(ex),
 
                     "Lỗi",
 
@@ -456,9 +456,7 @@ namespace MiniSupermarket.WinForms
 
                 _ =>
 
-                    $"Không thể thực hiện yêu cầu.\n" +
-
-                    $"Mã lỗi: {(int)statusCode} - {statusCode}"
+                    "Chưa thể hoàn tất thao tác. Vui lòng thử lại; nếu lỗi tiếp tục, hãy báo quản lý."
 
             };
 
@@ -598,7 +596,7 @@ namespace MiniSupermarket.WinForms
 
                     "Lỗi khi thêm nhóm hàng:\n\n" +
 
-                    ex.Message,
+                    MiniSupermarket.WinForms.Services.ApiClientService.GetFriendlyExceptionMessage(ex),
 
                     "Lỗi",
 
@@ -798,7 +796,7 @@ namespace MiniSupermarket.WinForms
 
                     "Lỗi khi cập nhật nhóm hàng:\n\n" +
 
-                    ex.Message,
+                    MiniSupermarket.WinForms.Services.ApiClientService.GetFriendlyExceptionMessage(ex),
 
                     "Lỗi",
 
@@ -972,7 +970,7 @@ namespace MiniSupermarket.WinForms
 
                     "Lỗi khi xóa nhóm hàng:\n\n" +
 
-                    ex.Message,
+                    MiniSupermarket.WinForms.Services.ApiClientService.GetFriendlyExceptionMessage(ex),
 
                     "Lỗi",
 
@@ -1064,7 +1062,7 @@ namespace MiniSupermarket.WinForms
 
                     "Không thể tìm kiếm nhóm hàng.\n\n" +
 
-                    ex.Message,
+                    MiniSupermarket.WinForms.Services.ApiClientService.GetFriendlyExceptionMessage(ex),
 
                     "Thông báo",
 

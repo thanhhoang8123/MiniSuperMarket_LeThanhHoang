@@ -235,9 +235,9 @@ namespace MiniSupermarket.WinForms
             catch (HttpRequestException)
             {
                 _customerLookupFailed = true;
-                _customerLookupErrorMessage = "Không kết nối được máy chủ để tra cứu khách hàng.";
+                    _customerLookupErrorMessage = "Chưa kết nối được máy chủ để tra cứu khách hàng.";
                 _currentCustomer = null;
-                lblCustomerName.Text = "Lỗi kết nối khi tra cứu khách hàng";
+                lblCustomerName.Text = "Chưa kết nối được máy chủ";
                 lblCustomerName.ForeColor = Color.FromArgb(185, 28, 28);
                 lblCustomerPoints.Text = "⭐ Điểm tích lũy: 0 điểm";
                 chkUseRewardPoints.Checked = false;
@@ -302,7 +302,7 @@ namespace MiniSupermarket.WinForms
                 if (product == null)
                 {
                     MessageBox.Show(
-                        $"Không tìm thấy sản phẩm có mã vạch '{barcode}' trong hệ thống!",
+                        $"Không tìm thấy sản phẩm có mã vạch “{barcode}”. Vui lòng kiểm tra mã và thử lại.",
                         "Cảnh báo quét mã",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Warning);
@@ -313,8 +313,8 @@ namespace MiniSupermarket.WinForms
                 if (product.StockQuantity <= 0)
                 {
                     MessageBox.Show(
-                        $"Sản phẩm '{product.ProductName}' hiện đã hết hàng trong kho!",
-                        "Cảnh báo hết hàng",
+                        $"“{product.ProductName}” hiện đã hết hàng. Vui lòng chọn sản phẩm khác.",
+                        "Sản phẩm tạm hết hàng",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Warning);
                     return;
@@ -328,7 +328,7 @@ namespace MiniSupermarket.WinForms
                     if (existingItem.Quantity >= product.StockQuantity)
                     {
                         MessageBox.Show(
-                            $"Sản phẩm '{product.ProductName}' trong kho chỉ còn {product.StockQuantity} cái, không thể thêm tiếp!",
+                            $"“{product.ProductName}” chỉ còn {product.StockQuantity:N0} sản phẩm trong kho, không thể thêm thêm vào giỏ.",
                             "Cảnh báo tồn kho",
                             MessageBoxButtons.OK,
                             MessageBoxIcon.Warning);
@@ -351,19 +351,37 @@ namespace MiniSupermarket.WinForms
 
                 UpdateCartDisplay();
             }
+            catch (System.Net.Http.HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                MessageBox.Show(
+                    $"Không tìm thấy sản phẩm có mã vạch “{barcode}”. Vui lòng kiểm tra mã và thử lại.",
+                    "Không tìm thấy sản phẩm",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+            }
+            catch (System.Net.Http.HttpRequestException ex) when (ex.StatusCode.HasValue)
+            {
+                string message = ex.StatusCode switch
+                {
+                    System.Net.HttpStatusCode.Unauthorized => "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.",
+                    System.Net.HttpStatusCode.Forbidden => "Tài khoản hiện tại không có quyền tra cứu sản phẩm.",
+                    _ => "Chưa tra cứu được sản phẩm lúc này. Vui lòng thử lại; nếu lỗi tiếp tục, hãy báo quản lý."
+                };
+                MessageBox.Show(message, "Chưa thể tra cứu sản phẩm", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
             catch (System.Net.Http.HttpRequestException)
             {
                 MessageBox.Show(
-                    "Không thể kết nối đến máy chủ Backend Web API!\nVui lòng kiểm tra lại dịch vụ máy chủ.",
-                    "Lỗi mất kết nối mạng",
+                    "Chưa kết nối được máy chủ bán hàng. Vui lòng kiểm tra mạng hoặc nhờ quản lý kiểm tra dịch vụ, rồi thử lại.",
+                    "Mất kết nối máy chủ",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 MessageBox.Show(
-                    "Đã xảy ra sự cố khi tra cứu sản phẩm:\n" + ex.Message,
-                    "Lỗi",
+                    "Đã xảy ra sự cố khi tra cứu sản phẩm. Vui lòng thử lại; nếu lỗi tiếp tục, hãy báo quản lý.",
+                    "Chưa thể tra cứu sản phẩm",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
             }
@@ -474,25 +492,34 @@ namespace MiniSupermarket.WinForms
             int pointsToRedeem = chkUseRewardPoints.Checked ? (int)nudPointsToRedeem.Value : 0;
             decimal discount = pointsToRedeem * 1000m;
             decimal finalTotal = Math.Max(0m, subTotal - discount);
+            decimal cashReceived = 0m;
+            string cashText = txtCashReceived.Text.Trim();
 
-            if (!decimal.TryParse(txtCashReceived.Text, out decimal cashReceived))
+            // Khi điểm thưởng đã trừ hết hóa đơn, không bắt khách nhập tiền mặt.
+            // Nếu ô tiền có nội dung thì vẫn kiểm tra để tránh bỏ qua dữ liệu nhập sai.
+            if (finalTotal > 0m || !string.IsNullOrWhiteSpace(cashText))
             {
-                MessageBox.Show(
-                    "Vui lòng nhập số tiền khách đưa!",
-                    "Cảnh báo",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning);
-                return;
-            }
+                if (!decimal.TryParse(cashText, out cashReceived) || cashReceived < 0m)
+                {
+                    MessageBox.Show(
+                        "Vui lòng nhập số tiền khách đưa là số hợp lệ và không âm.",
+                        "Kiểm tra tiền khách đưa",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
+                    txtCashReceived.Focus();
+                    return;
+                }
 
-            if (cashReceived < finalTotal)
-            {
-                MessageBox.Show(
-                    "Số tiền khách đưa chưa đủ để thanh toán!",
-                    "Cảnh báo",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning);
-                return;
+                if (cashReceived < finalTotal)
+                {
+                    MessageBox.Show(
+                        $"Số tiền khách đưa chưa đủ. Còn thiếu {finalTotal - cashReceived:N0} đ.",
+                        "Chưa đủ tiền thanh toán",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
+                    txtCashReceived.Focus();
+                    return;
+                }
             }
 
             var orderRequest = new
@@ -517,13 +544,13 @@ namespace MiniSupermarket.WinForms
                 if (response.IsSuccessStatusCode)
                 {
                     string successMessage = pointsToRedeem > 0
-                        ? $"Thanh toán thành công và đã in hóa đơn!\n\n" +
+                        ? $"Đơn hàng đã được ghi nhận thành công.\n\n" +
                           $"• Tạm tính: {subTotal:N0} đ\n" +
                           $"• Đổi {pointsToRedeem} điểm thưởng: -{discount:N0} đ\n" +
                           $"• Tổng thanh toán: {finalTotal:N0} đ\n" +
                           $"• Tiền khách đưa: {cashReceived:N0} đ\n" +
                           $"• Tiền thối lại: {(cashReceived - finalTotal):N0} đ"
-                        : $"Thanh toán thành công và đã in hóa đơn!\n\n" +
+                        : $"Đơn hàng đã được ghi nhận thành công.\n\n" +
                           $"• Tổng thanh toán: {finalTotal:N0} đ\n" +
                           $"• Tiền khách đưa: {cashReceived:N0} đ\n" +
                           $"• Tiền thối lại: {(cashReceived - finalTotal):N0} đ";
@@ -546,20 +573,24 @@ namespace MiniSupermarket.WinForms
                 }
                 else
                 {
-                    string errContent = await response.Content.ReadAsStringAsync();
-                    string friendlyMessage = "Thao tác thanh toán không thành công.";
-
-                    try
+                    string friendlyMessage;
+                    if (response.StatusCode == System.Net.HttpStatusCode.BadRequest ||
+                        response.StatusCode == System.Net.HttpStatusCode.Conflict)
                     {
-                        using var doc = System.Text.Json.JsonDocument.Parse(errContent);
-                        if (doc.RootElement.TryGetProperty("message", out var msgProp))
-                        {
-                            friendlyMessage = msgProp.GetString() ?? friendlyMessage;
-                        }
+                        friendlyMessage = await ReadBusinessErrorMessageAsync(response)
+                            ?? "Không thể hoàn tất giao dịch. Vui lòng kiểm tra giỏ hàng, tồn kho, khách hàng và điểm thưởng rồi thử lại.";
                     }
-                    catch
+                    else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
                     {
-                        // Giữ thông báo thân thiện mặc định nếu body không phải JSON
+                        friendlyMessage = "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại trước khi thanh toán.";
+                    }
+                    else if ((int)response.StatusCode >= 500)
+                    {
+                        friendlyMessage = "Máy chủ chưa thể hoàn tất thanh toán. Giao dịch đã được hủy an toàn; vui lòng kiểm tra lại đơn hàng trước khi thử lại.";
+                    }
+                    else
+                    {
+                        friendlyMessage = "Thanh toán chưa thành công. Vui lòng kiểm tra thông tin và thử lại; nếu lỗi tiếp tục, hãy báo quản lý.";
                     }
 
                     MessageBox.Show(
@@ -572,16 +603,16 @@ namespace MiniSupermarket.WinForms
             catch (System.Net.Http.HttpRequestException)
             {
                 MessageBox.Show(
-                    "Mất kết nối với máy chủ API khi gửi đơn thanh toán!\nVui lòng kiểm tra lại mạng và thử lại.",
-                    "Lỗi mất kết nối",
+                    "Chưa gửi được thanh toán vì mất kết nối máy chủ. Hãy kiểm tra trạng thái đơn hàng trước khi thử lại để tránh thanh toán trùng.",
+                    "Mất kết nối khi thanh toán",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 MessageBox.Show(
-                    "Đã xảy ra lỗi không xác định:\n" + ex.Message,
-                    "Lỗi",
+                    "Thanh toán gặp sự cố ngoài dự kiến. Vui lòng kiểm tra lại trạng thái đơn hàng hoặc báo quản lý trước khi thử lại.",
+                    "Chưa thể xác nhận thanh toán",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
             }
@@ -589,6 +620,27 @@ namespace MiniSupermarket.WinForms
             {
                 btnCheckout.Enabled = true;
             }
+        }
+
+        private static async Task<string?> ReadBusinessErrorMessageAsync(System.Net.Http.HttpResponseMessage response)
+        {
+            try
+            {
+                string content = await response.Content.ReadAsStringAsync();
+                using var document = System.Text.Json.JsonDocument.Parse(content);
+                if (document.RootElement.TryGetProperty("message", out var messageElement) &&
+                    messageElement.ValueKind == System.Text.Json.JsonValueKind.String)
+                {
+                    string? message = messageElement.GetString()?.Trim();
+                    return string.IsNullOrWhiteSpace(message) ? null : message;
+                }
+            }
+            catch (System.Text.Json.JsonException)
+            {
+                // Non-JSON responses use the friendly fallback in the caller.
+            }
+
+            return null;
         }
 
         // =====================================================

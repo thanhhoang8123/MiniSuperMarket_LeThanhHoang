@@ -228,7 +228,7 @@ namespace MiniSupermarket.WinForms
 
                 MessageBox.Show(
 
-                    "Lỗi tải danh sách khách hàng: " + ex.Message,
+                    "Lỗi tải danh sách khách hàng: " + MiniSupermarket.WinForms.Services.ApiClientService.GetFriendlyExceptionMessage(ex),
 
                     "Lỗi",
 
@@ -532,7 +532,7 @@ namespace MiniSupermarket.WinForms
 
                 MessageBox.Show(
 
-                    "Lỗi kết nối Server: " + ex.Message,
+                    "Lỗi kết nối Server: " + MiniSupermarket.WinForms.Services.ApiClientService.GetFriendlyExceptionMessage(ex),
 
                     "Lỗi",
 
@@ -708,7 +708,7 @@ namespace MiniSupermarket.WinForms
 
                 MessageBox.Show(
 
-                    "Lỗi kết nối Server: " + ex.Message,
+                    "Lỗi kết nối Server: " + MiniSupermarket.WinForms.Services.ApiClientService.GetFriendlyExceptionMessage(ex),
 
                     "Lỗi",
 
@@ -854,7 +854,7 @@ namespace MiniSupermarket.WinForms
 
                 MessageBox.Show(
 
-                    "Lỗi kết nối Server: " + ex.Message,
+                    "Lỗi kết nối Server: " + MiniSupermarket.WinForms.Services.ApiClientService.GetFriendlyExceptionMessage(ex),
 
                     "Lỗi",
 

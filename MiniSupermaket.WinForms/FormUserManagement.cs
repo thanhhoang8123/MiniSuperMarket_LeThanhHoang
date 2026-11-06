@@ -262,14 +262,9 @@ namespace MiniSupermarket.WinForms
                 }
                 else
                 {
-                    var message =
-                        await response.Content.ReadAsStringAsync();
-
                     MessageBox.Show(
-                        $"Không thể thay đổi trạng thái!\n\n" +
-                        $"HTTP: {(int)response.StatusCode}\n\n" +
-                        message,
-                        "Lỗi",
+                        MiniSupermarket.WinForms.Services.ApiClientService.GetFriendlyResponseMessage(response.StatusCode, "thay đổi trạng thái tài khoản"),
+                        "Chưa thể cập nhật tài khoản",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Error);
                 }
@@ -277,7 +272,7 @@ namespace MiniSupermarket.WinForms
             catch (Exception ex)
             {
                 MessageBox.Show(
-                    "Lỗi kết nối Server: " + ex.Message,
+                    "Lỗi kết nối Server: " + MiniSupermarket.WinForms.Services.ApiClientService.GetFriendlyExceptionMessage(ex),
                     "Lỗi",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
@@ -341,14 +336,9 @@ namespace MiniSupermarket.WinForms
                 }
                 else
                 {
-                    var message =
-                        await response.Content.ReadAsStringAsync();
-
                     MessageBox.Show(
-                        $"Đặt lại mật khẩu thất bại!\n\n" +
-                        $"HTTP: {(int)response.StatusCode}\n\n" +
-                        message,
-                        "Lỗi",
+                        MiniSupermarket.WinForms.Services.ApiClientService.GetFriendlyResponseMessage(response.StatusCode, "đặt lại mật khẩu"),
+                        "Chưa thể đặt lại mật khẩu",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Error);
                 }
@@ -356,7 +346,7 @@ namespace MiniSupermarket.WinForms
             catch (Exception ex)
             {
                 MessageBox.Show(
-                    "Lỗi kết nối Server: " + ex.Message,
+                    "Lỗi kết nối Server: " + MiniSupermarket.WinForms.Services.ApiClientService.GetFriendlyExceptionMessage(ex),
                     "Lỗi",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
@@ -394,7 +384,7 @@ namespace MiniSupermarket.WinForms
             catch (Exception ex)
             {
                 MessageBox.Show(
-                    "Lỗi lấy danh sách tài khoản: " + ex.Message,
+                    "Lỗi lấy danh sách tài khoản: " + MiniSupermarket.WinForms.Services.ApiClientService.GetFriendlyExceptionMessage(ex),
                     "Lỗi",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
@@ -493,14 +483,9 @@ namespace MiniSupermarket.WinForms
                 }
                 else
                 {
-                    var message =
-                        await res.Content.ReadAsStringAsync();
-
                     MessageBox.Show(
-                        $"Không thể tạo tài khoản!\n\n" +
-                        $"HTTP: {(int)res.StatusCode} - {res.StatusCode}\n\n" +
-                        message,
-                        "Thất bại",
+                        MiniSupermarket.WinForms.Services.ApiClientService.GetFriendlyResponseMessage(res.StatusCode, "tạo tài khoản"),
+                        "Chưa thể tạo tài khoản",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Warning);
                 }
@@ -508,7 +493,7 @@ namespace MiniSupermarket.WinForms
             catch (Exception ex)
             {
                 MessageBox.Show(
-                    "Lỗi kết nối Server: " + ex.Message,
+                    "Lỗi kết nối Server: " + MiniSupermarket.WinForms.Services.ApiClientService.GetFriendlyExceptionMessage(ex),
                     "Lỗi",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
